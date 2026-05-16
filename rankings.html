@@ -520,7 +520,7 @@
   <div class="mode-toggle">
     <button class="mode-btn active" id="mode-current">Current</button>
     <button class="mode-btn" id="mode-alltime">All-Time</button>
-    <span class="mode-desc" id="mode-desc">Active fighters · Sorted by current Elo</span>
+    <span class="mode-desc" id="mode-desc">Active fighters · Elo adjusted for recency</span>
   </div>
 
   <div class="controls">
@@ -565,7 +565,8 @@
   <div class="footer-note">
     D = 600 &nbsp;·&nbsp; K = 40 adaptive &nbsp;·&nbsp; Result confidence multipliers applied<br>
     Source: UFCStats.com &nbsp;·&nbsp; Updates automatically every Sunday<br>
-    Ratings reflect opponent strength at time of fight — no retroactive adjustments
+    Form Elo = current Elo × recency factor (decay starts at 6 months inactive, floor 92%)<br>
+    All-Time Adj. = peak Elo × historical decay (starts at 2 years, floor 45%)
   </div>
   <div class="footer-brand">ELO</div>
 </footer>
@@ -592,6 +593,42 @@
   let fightsLoaded = false, fightsLoading = false;
   let fightsIndex  = {};
   let fightsError  = false;
+
+  /* ── Time decay ── */
+  const TODAY_MS = Date.now();
+
+  function daysSince(iso) {
+    return iso ? (TODAY_MS - new Date(iso).getTime()) / 86400000 : 9999;
+  }
+
+  // Rankings / GOAT-Current: light decay starting at 6 months, floor 92%
+  // Fighters who fought recently rank above equally-rated inactive ones
+  function currDecay(f) {
+    const d = daysSince(f.last_fight_date);
+    if (d <= 180) return 1.0;
+    return Math.max(0.92, 1.0 - (d - 180) * 0.000285);
+  }
+
+  // GOAT All-Time: historical decay starting at 2 years, floor 45%
+  // Active legends stay near top; long-retired fighters gradually fall
+  function histDecay(f) {
+    const d = daysSince(f.last_fight_date);
+    if (d <= 730) return 1.0;
+    return Math.max(0.45, 1.0 - (d - 730) * 0.000140);
+  }
+
+  // The single adjusted Elo used for all sorting and display
+  function adjElo(f) {
+    if (viewMode === 'leaderboard' && mode === 'alltime') {
+      return (parseFloat(f.peak_elo) || 0) * histDecay(f);
+    }
+    return (parseFloat(f.current_elo) || 0) * currDecay(f);
+  }
+
+  function decayPct(f) {
+    const dec = (viewMode === 'leaderboard' && mode === 'alltime') ? histDecay(f) : currDecay(f);
+    return Math.round(dec * 100);
+  }
 
   const DIVISION_NAMES = {
     '': 'Pound for Pound',
@@ -631,7 +668,7 @@
   function getActiveFiltered() {
     let base = all.filter(f => f.last_fight_date >= ACTIVE_CUTOFF_ISO);
     if (activeWC) base = base.filter(f => f.weight_class === activeWC);
-    return base.sort((a, b) => (parseFloat(b.current_elo) || 0) - (parseFloat(a.current_elo) || 0));
+    return base.sort((a, b) => adjElo(b) - adjElo(a));
   }
 
   function renderRankings() {
@@ -651,11 +688,14 @@
 
     // Featured #1
     const champ = ranked[0];
-    const champElo = Math.round(parseFloat(champ.current_elo) || 0);
+    const champAdj  = Math.round(adjElo(champ));
+    const champRaw  = Math.round(parseFloat(champ.current_elo) || 0);
+    const champDecP = decayPct(champ);
     const champSub = [
       activeWC || champ.weight_class || '',
       champ.win_streak > 0 ? `${champ.win_streak}-Fight Win Streak` : '',
-      `${champ.fights} Fights`
+      `${champ.fights} Fights`,
+      champDecP < 100 ? `Form ${champDecP}%` : ''
     ].filter(Boolean).join(' · ');
 
     featCard.style.display = 'flex';
@@ -671,8 +711,8 @@
              onerror="this.parentElement.style.background='var(--faint)';this.style.display='none'">
       </div>
       <div class="featured-elo-block">
-        <div class="featured-elo-n">${champElo.toLocaleString()}</div>
-        <div class="featured-elo-l">Current Elo</div>
+        <div class="featured-elo-n">${champAdj.toLocaleString()}</div>
+        <div class="featured-elo-l">${champDecP < 100 ? `Form Elo <span style="color:var(--muted);font-size:10px">(Peak ${champRaw})</span>` : 'Current Elo'}</div>
       </div>`;
 
     // Contenders #2+
@@ -680,7 +720,8 @@
     else contList.classList.remove('show-wc');
 
     contList.innerHTML = ranked.slice(1, 15).map((f, i) => {
-      const elo = Math.round(parseFloat(f.current_elo) || 0);
+      const adj  = Math.round(adjElo(f));
+      const dp   = decayPct(f);
       const streakHtml = f.win_streak > 1
         ? `<span class="contender-streak">${f.win_streak}W</span>`
         : `<span class="contender-streak"></span>`;
@@ -693,7 +734,7 @@
         <span class="contender-name">${f.fighter}</span>
         <span class="contender-wc">${f.weight_class || ''}</span>
         ${streakHtml}
-        <span class="contender-elo">${elo.toLocaleString()}</span>
+        <span class="contender-elo">${adj.toLocaleString()}${dp < 100 ? `<span style="font-size:9px;color:var(--muted);display:block;text-align:right;margin-top:1px">${dp}%</span>` : ''}</span>
       </div>`;
     }).join('');
 
@@ -727,15 +768,25 @@
 
   function tableRows(data) {
     return data.map(f => {
-      const rank  = f._rank;
-      const delta = Math.round((parseFloat(f.current_elo) || 0) - (parseFloat(f.peak_elo) || 0));
-      const dStr  = delta === 0 ? ''
-        : `<span style="font-size:9px;color:var(--muted);margin-left:4px">${delta > 0 ? '+' : ''}${delta}</span>`;
+      const rank   = f._rank;
+      const adj    = Math.round(adjElo(f));
+      const raw    = Math.round(parseFloat(mode === 'alltime' ? f.peak_elo : f.current_elo) || 0);
+      const dp     = decayPct(f);
+      const decStr = dp < 100
+        ? `<span style="font-size:9px;color:var(--muted);margin-left:4px">${dp}%</span>`
+        : '';
       return `<tr data-id="${f.fighter_id}">
         <td class="rank-cell ${rankClass(rank)}">${String(rank).padStart(2, '0')}</td>
-        <td><span class="name">${f.fighter}</span></td>
+        <td>
+          <div style="display:flex;align-items:center;gap:14px">
+            <div class="contender-avatar" style="flex-shrink:0">
+              <img src="fighters/${f.fighter_id}.jpg" alt="" onerror="this.style.display='none'">
+            </div>
+            <span class="name">${f.fighter}</span>
+          </div>
+        </td>
         <td class="r peak">${fmt(f.peak_elo)}</td>
-        <td class="r dim">${fmt(f.current_elo)}${dStr}</td>
+        <td class="r dim">${adj.toLocaleString()}${decStr}</td>
         <td class="r dim fights-cell">${f.fights || '—'}</td>
         <td class="r streak-cell">${streak(f.win_streak)}</td>
       </tr>`;
@@ -788,14 +839,19 @@
       ? 'Active fighters · Sorted by current Elo'
       : 'All-time peak Elo · Greatest of all time';
 
-    const newSortCol = isCurrent ? 'current_elo' : 'peak_elo';
     sortAsc = false;
-    sortCol = newSortCol;
+    sortCol = isCurrent ? 'current_elo' : 'peak_elo';
     document.querySelectorAll('th[data-sort]').forEach(th => {
       th.classList.remove('sorted', 'asc');
       if (th.dataset.sort === sortCol) th.classList.add('sorted');
     });
-    all.sort((a, b) => (parseFloat(b[sortCol]) || 0) - (parseFloat(a[sortCol]) || 0));
+    // Update column header label
+    const currTh = document.querySelector('th[data-sort="current_elo"]');
+    if (currTh) currTh.textContent = isCurrent ? 'Form Elo' : 'Adj. Elo';
+    document.getElementById('mode-desc').textContent = isCurrent
+      ? 'Active fighters · Elo adjusted for recency'
+      : 'All fighters · Peak Elo with activity decay';
+    all.sort((a, b) => adjElo(b) - adjElo(a));
     all.forEach((f, i) => f._rank = i + 1);
     filter(document.getElementById('search').value);
   }
@@ -814,6 +870,9 @@
 
     if (col === 'fighter') {
       all.sort((a, b) => sortAsc ? a.fighter.localeCompare(b.fighter) : b.fighter.localeCompare(a.fighter));
+    } else if (col === 'current_elo' || col === 'peak_elo') {
+      // Sort by decay-adjusted Elo
+      all.sort((a, b) => sortAsc ? adjElo(a) - adjElo(b) : adjElo(b) - adjElo(a));
     } else {
       all.sort((a, b) => {
         const av = parseFloat(a[col]) || 0, bv = parseFloat(b[col]) || 0;
@@ -833,6 +892,7 @@
     document.getElementById('rankings-view').style.display = isRankings ? 'block' : 'none';
     document.getElementById('leaderboard-view').style.display = isRankings ? 'none' : 'block';
     if (isRankings) renderRankings();
+    else filter(document.getElementById('search').value);
   }
 
   /* ── Fights log ── */
@@ -1021,15 +1081,18 @@
       document.getElementById('stat-fighters').textContent = all.length.toLocaleString();
       document.getElementById('stat-active').textContent   = activeCount.toLocaleString();
 
-      // Initial sort by current_elo descending for both views
-      all.sort((a, b) => (parseFloat(b.current_elo) || 0) - (parseFloat(a.current_elo) || 0));
+      // Initial sort by decay-adjusted current Elo
+      all.sort((a, b) => adjElo(b) - adjElo(a));
       all.forEach((f, i) => f._rank = i + 1);
       sortCol = 'current_elo'; sortAsc = false;
 
-      // Sync sorted header state
+      // Sync sorted header state + label
       document.querySelectorAll('th[data-sort]').forEach(th => {
         th.classList.remove('sorted', 'asc');
-        if (th.dataset.sort === 'current_elo') th.classList.add('sorted');
+        if (th.dataset.sort === 'current_elo') {
+          th.classList.add('sorted');
+          th.textContent = 'Form Elo';
+        }
       });
 
       setView('rankings');

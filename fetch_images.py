@@ -50,19 +50,8 @@ def load_leaderboard(path="leaderboard.csv"):
 
 def get_targets(rows):
     active = [r for r in rows if r.get("last_fight_date", "") >= cutoff]
-    needed: dict[str, str] = {}
-
-    p4p = sorted(active, key=lambda r: float(r.get("current_elo") or 0), reverse=True)
-    for r in p4p[:TOP_N]:
-        needed[r["fighter_id"]] = r["fighter"]
-
-    for div in DIVISIONS:
-        div_rows = [r for r in active if r.get("weight_class") == div]
-        div_rows.sort(key=lambda r: float(r.get("current_elo") or 0), reverse=True)
-        for r in div_rows[:TOP_N]:
-            needed[r["fighter_id"]] = r["fighter"]
-
-    return needed
+    active.sort(key=lambda r: float(r.get("current_elo") or 0), reverse=True)
+    return {r["fighter_id"]: r["fighter"] for r in active}
 
 
 def name_to_slug(name: str) -> list[str]:
