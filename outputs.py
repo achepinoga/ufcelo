@@ -87,8 +87,45 @@ def elo_timeline(fighters: dict, fighter_ids: list) -> pd.DataFrame:
     return pd.DataFrame(rows).sort_values(["fighter_id", "date"])
 
 
-def save_all_outputs(fighters: dict, logs: list):
+def fights_log_df(fighters: dict, logs: list) -> pd.DataFrame:
+    name_map = {fid: f.name for fid, f in fighters.items()}
+    rows = []
+    for log in logs:
+        if log.get("voided"):
+            continue
+        a_id = log["fighter_a"]
+        b_id = log["fighter_b"]
+        rows.append({
+            "date":          log["date"],
+            "event":         log["event"],
+            "fighter_a_id":  a_id,
+            "fighter_a":     name_map.get(a_id, a_id.replace("_", " ").title()),
+            "fighter_b_id":  b_id,
+            "fighter_b":     name_map.get(b_id, b_id.replace("_", " ").title()),
+            "winner_id":     log.get("winner") or "",
+            "result":        log["result"],
+            "elo_a_before":  log["elo_a_before"],
+            "elo_a_after":   round(log["elo_a_before"] + log["delta_a"], 1),
+            "delta_a":       round(log["delta_a"], 1),
+            "elo_b_before":  log["elo_b_before"],
+            "elo_b_after":   round(log["elo_b_before"] + log["delta_b"], 1),
+            "delta_b":       round(log["delta_b"], 1),
+            "exp_a":         log["exp_a"],
+        })
+    return pd.DataFrame(rows)
+
+
+def save_all_outputs(fighters: dict, logs: list, append_fights: bool = False):
+    import os
     peak_elo_leaderboard(fighters).to_csv("leaderboard.csv", index=True)
     upset_index(logs).to_csv("upset_index.csv", index=True)
     strength_of_schedule(logs).to_csv("strength_of_schedule.csv", index=False)
-    print("Outputs written: leaderboard.csv, upset_index.csv, strength_of_schedule.csv")
+
+    new_fights = fights_log_df(fighters, logs)
+    if append_fights and os.path.exists("fights_log.csv"):
+        existing = pd.read_csv("fights_log.csv", dtype=str)
+        pd.concat([existing, new_fights.astype(str)], ignore_index=True).to_csv("fights_log.csv", index=False)
+    else:
+        new_fights.to_csv("fights_log.csv", index=False)
+
+    print("Outputs written: leaderboard.csv, upset_index.csv, strength_of_schedule.csv, fights_log.csv")

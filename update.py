@@ -74,7 +74,7 @@ def main():
 
     last_date = max(f.date for f in fights)
     save_state(fighters, last_date)
-    save_all_outputs(fighters, all_logs)
+    save_all_outputs(fighters, all_logs, append_fights=os.path.exists("fights_log.csv"))
 
     # Clean up checkpoint file if it exists
     if os.path.exists("state_checkpoint.json"):

@@ -11,335 +11,259 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --ink:       #0C0C0B;
-      --paper:     #F7F7F4;
-      --rule:      #E2E2DC;
-      --muted:     #999990;
-      --faint:     #F0F0EC;
-      --serif:     'Cormorant Garamond', Georgia, serif;
-      --mono:      'IBM Plex Mono', 'Courier New', monospace;
+      --ink:    #0C0C0B;
+      --paper:  #F7F7F4;
+      --rule:   #E2E2DC;
+      --muted:  #999990;
+      --faint:  #F0F0EC;
+      --serif:  'Cormorant Garamond', Georgia, serif;
+      --mono:   'IBM Plex Mono', 'Courier New', monospace;
     }
 
     html { font-size: 16px; scroll-behavior: smooth; }
-
-    body {
-      background: var(--paper);
-      color: var(--ink);
-      font-family: var(--mono);
-      min-height: 100vh;
-    }
+    body { background: var(--paper); color: var(--ink); font-family: var(--mono); min-height: 100vh; }
 
     /* ── Header ── */
-    header {
-      padding: 72px 64px 0;
-      position: relative;
-    }
+    header { padding: 72px 64px 0; position: relative; }
 
     .eyebrow {
-      font-size: 9px;
-      font-weight: 400;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--muted);
-      opacity: 0;
-      animation: up 0.7s ease 0.1s forwards;
+      font-size: 9px; font-weight: 400; letter-spacing: 0.3em;
+      text-transform: uppercase; color: var(--muted);
+      opacity: 0; animation: up 0.7s ease 0.1s forwards;
     }
 
     .title {
       font-family: var(--serif);
       font-size: clamp(72px, 11vw, 132px);
-      font-weight: 300;
-      line-height: 0.88;
-      letter-spacing: -0.025em;
-      margin-top: 18px;
-      opacity: 0;
-      animation: up 0.7s ease 0.2s forwards;
+      font-weight: 300; line-height: 0.88; letter-spacing: -0.025em; margin-top: 18px;
+      opacity: 0; animation: up 0.7s ease 0.2s forwards;
     }
-
-    .title em {
-      font-style: italic;
-      font-weight: 300;
-    }
+    .title em { font-style: italic; font-weight: 300; }
 
     .header-stats {
-      position: absolute;
-      right: 64px;
-      bottom: 0;
-      text-align: right;
-      opacity: 0;
-      animation: up 0.7s ease 0.3s forwards;
-      display: flex;
-      gap: 40px;
+      position: absolute; right: 64px; bottom: 0; text-align: right;
+      opacity: 0; animation: up 0.7s ease 0.3s forwards;
+      display: flex; gap: 40px;
     }
-
     .stat-block { text-align: right; }
-
-    .stat-n {
-      font-family: var(--serif);
-      font-size: 42px;
-      font-weight: 300;
-      line-height: 1;
-    }
-
-    .stat-l {
-      font-size: 8px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-top: 2px;
-    }
+    .stat-n { font-family: var(--serif); font-size: 42px; font-weight: 300; line-height: 1; }
+    .stat-l { font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
 
     /* ── Rules ── */
     .rule {
-      height: 1px;
-      background: var(--ink);
-      margin: 36px 64px 0;
-      transform: scaleX(0);
-      transform-origin: left;
+      height: 1px; background: var(--ink); margin: 36px 64px 0;
+      transform: scaleX(0); transform-origin: left;
       animation: line 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
     }
-
-    .rule-light {
-      height: 1px;
-      background: var(--rule);
-      margin: 0 64px;
-    }
+    .rule-light { height: 1px; background: var(--rule); margin: 0 64px; }
 
     /* ── Controls ── */
     .controls {
-      padding: 20px 64px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-      opacity: 0;
-      animation: up 0.5s ease 0.9s forwards;
+      padding: 20px 64px; display: flex; align-items: center;
+      justify-content: space-between; gap: 24px;
+      opacity: 0; animation: up 0.5s ease 0.9s forwards;
     }
-
-    .search-wrap {
-      position: relative;
-      flex: 0 0 300px;
-    }
-
+    .search-wrap { position: relative; flex: 0 0 300px; }
     .search-input {
-      width: 100%;
-      background: none;
-      border: none;
+      width: 100%; background: none; border: none;
       border-bottom: 1px solid var(--rule);
       padding: 7px 60px 7px 0;
-      font-family: var(--mono);
-      font-size: 12px;
-      font-weight: 300;
-      color: var(--ink);
-      outline: none;
-      letter-spacing: 0.04em;
+      font-family: var(--mono); font-size: 12px; font-weight: 300;
+      color: var(--ink); outline: none; letter-spacing: 0.04em;
       transition: border-color 0.2s;
     }
-
     .search-input::placeholder { color: var(--muted); }
     .search-input:focus { border-color: var(--ink); }
-
     .search-hint {
-      position: absolute;
-      right: 0;
-      top: 7px;
-      font-size: 8px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--muted);
-      pointer-events: none;
+      position: absolute; right: 0; top: 7px;
+      font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--muted); pointer-events: none;
     }
-
-    .result-label {
-      font-size: 9px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
+    .result-label { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
 
     /* ── Table ── */
-    .table-wrap {
-      padding: 0 64px;
-      opacity: 0;
-      animation: up 0.5s ease 1.1s forwards;
-    }
+    .table-wrap { padding: 0 64px; opacity: 0; animation: up 0.5s ease 1.1s forwards; }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
+    table { width: 100%; border-collapse: collapse; }
     colgroup .col-rank   { width: 68px; }
-    colgroup .col-name   { }
     colgroup .col-peak   { width: 110px; }
     colgroup .col-curr   { width: 110px; }
     colgroup .col-fights { width: 80px; }
     colgroup .col-streak { width: 120px; }
 
     thead th {
-      font-size: 8px;
-      font-weight: 400;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--muted);
-      padding: 14px 0;
-      text-align: left;
+      font-size: 8px; font-weight: 400; letter-spacing: 0.28em;
+      text-transform: uppercase; color: var(--muted);
+      padding: 14px 0; text-align: left;
       border-bottom: 1px solid var(--rule);
-      white-space: nowrap;
-      user-select: none;
+      white-space: nowrap; user-select: none;
     }
-
     thead th.r { text-align: right; }
-
-    thead th[data-sort] {
-      cursor: pointer;
-      transition: color 0.15s;
-    }
-
+    thead th[data-sort] { cursor: pointer; transition: color 0.15s; }
     thead th[data-sort]:hover { color: var(--ink); }
-
     thead th.sorted { color: var(--ink); }
-
-    thead th.sorted::after {
-      content: ' ↓';
-      font-size: 7px;
-    }
-
+    thead th.sorted::after { content: ' ↓'; font-size: 7px; }
     thead th.sorted.asc::after { content: ' ↑'; }
 
     tbody tr {
       border-bottom: 1px solid var(--rule);
-      cursor: default;
+      cursor: pointer;
       transition: background 0.12s;
     }
-
     tbody tr:hover { background: var(--faint); }
+    tbody tr:hover .name { font-style: normal; letter-spacing: 0.005em; }
 
-    tbody tr:hover .name {
-      font-style: normal;
-      letter-spacing: 0.005em;
-    }
-
-    td {
-      padding: 15px 0;
-      font-family: var(--mono);
-      font-size: 12px;
-      font-weight: 300;
-      vertical-align: middle;
-      transition: color 0.12s;
-    }
-
-    td.rank-cell {
-      font-size: 10px;
-      color: var(--muted);
-      letter-spacing: 0.06em;
-      padding-right: 12px;
-    }
-
+    td { padding: 15px 0; font-family: var(--mono); font-size: 12px; font-weight: 300; vertical-align: middle; }
+    td.rank-cell { font-size: 10px; color: var(--muted); letter-spacing: 0.06em; padding-right: 12px; }
     td.rank-cell.gold   { color: var(--ink); font-weight: 400; }
     td.rank-cell.silver { color: #777; font-weight: 400; }
     td.rank-cell.bronze { color: #999; }
 
     .name {
-      font-family: var(--serif);
-      font-size: 19px;
-      font-weight: 400;
-      font-style: italic;
-      letter-spacing: 0.008em;
-      transition: font-style 0.2s, letter-spacing 0.2s;
+      font-family: var(--serif); font-size: 19px; font-weight: 400; font-style: italic;
+      letter-spacing: 0.008em; transition: font-style 0.2s, letter-spacing 0.2s;
     }
 
-    td.r {
-      text-align: right;
-      font-variant-numeric: tabular-nums;
-    }
-
+    td.r { text-align: right; font-variant-numeric: tabular-nums; }
     td.peak { font-weight: 400; }
-
     td.dim  { color: var(--muted); }
 
-    .streak-pip {
-      display: inline-block;
-      font-size: 6px;
-      letter-spacing: 1.5px;
-      vertical-align: middle;
-    }
-
-    .streak-num {
-      display: inline-block;
-      min-width: 20px;
-      margin-right: 6px;
-    }
+    .streak-pip { display: inline-block; font-size: 6px; letter-spacing: 1.5px; vertical-align: middle; }
+    .streak-num { display: inline-block; min-width: 20px; margin-right: 6px; }
 
     /* ── Load more ── */
-    .more-wrap {
-      text-align: center;
-      padding: 48px 64px;
-    }
-
+    .more-wrap { text-align: center; padding: 48px 64px; }
     .more-btn {
-      background: none;
-      border: 1px solid var(--rule);
-      padding: 13px 36px;
-      font-family: var(--mono);
-      font-size: 9px;
-      font-weight: 400;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--muted);
-      cursor: pointer;
-      transition: border-color 0.2s, color 0.2s;
+      background: none; border: 1px solid var(--rule);
+      padding: 13px 36px; font-family: var(--mono);
+      font-size: 9px; font-weight: 400; letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--muted); cursor: pointer; transition: border-color 0.2s, color 0.2s;
     }
-
-    .more-btn:hover {
-      border-color: var(--ink);
-      color: var(--ink);
-    }
+    .more-btn:hover { border-color: var(--ink); color: var(--ink); }
 
     /* ── Footer ── */
     footer {
-      padding: 40px 64px 64px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
+      padding: 40px 64px 64px; display: flex;
+      justify-content: space-between; align-items: flex-end;
       border-top: 1px solid var(--rule);
-      margin-top: 0;
     }
-
-    .footer-note {
-      font-size: 9px;
-      line-height: 2;
-      color: var(--muted);
-      letter-spacing: 0.08em;
-    }
-
+    .footer-note { font-size: 9px; line-height: 2; color: var(--muted); letter-spacing: 0.08em; }
     .footer-brand {
-      font-family: var(--serif);
-      font-size: 56px;
-      font-weight: 300;
-      font-style: italic;
-      color: var(--rule);
-      line-height: 1;
-      letter-spacing: -0.02em;
-      user-select: none;
+      font-family: var(--serif); font-size: 56px; font-weight: 300; font-style: italic;
+      color: var(--rule); line-height: 1; letter-spacing: -0.02em; user-select: none;
     }
 
     /* ── Error state ── */
     .error-state {
-      padding: 80px 64px;
-      font-size: 11px;
-      font-weight: 300;
-      line-height: 2.2;
-      color: var(--muted);
-      letter-spacing: 0.05em;
+      padding: 80px 64px; font-size: 11px; font-weight: 300;
+      line-height: 2.2; color: var(--muted); letter-spacing: 0.05em;
+    }
+    .error-state code {
+      font-family: var(--mono); font-size: 12px; color: var(--ink);
+      background: var(--faint); padding: 2px 8px;
     }
 
-    .error-state code {
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--ink);
-      background: var(--faint);
-      padding: 2px 8px;
+    /* ── Fighter Modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(247, 247, 244, 0.97);
+      overflow-y: auto;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.22s ease;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+    .modal {
+      max-width: 960px; margin: 0 auto;
+      padding: 56px 64px 80px;
+      transform: translateY(18px);
+      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+
+    .modal-close {
+      display: flex; align-items: center; gap: 10px;
+      background: none; border: none; cursor: pointer;
+      font-family: var(--mono); font-size: 9px; font-weight: 400;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--muted); padding: 0; margin-bottom: 48px;
+      transition: color 0.15s;
+    }
+    .modal-close:hover { color: var(--ink); }
+    .modal-close svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+
+    .modal-fighter-name {
+      font-family: var(--serif); font-size: clamp(48px, 7vw, 88px);
+      font-weight: 300; font-style: italic; line-height: 0.9;
+      letter-spacing: -0.02em; margin-bottom: 32px;
+    }
+
+    .modal-stats {
+      display: flex; gap: 48px; margin-bottom: 40px; flex-wrap: wrap;
+    }
+    .modal-stat-block {}
+    .modal-stat-n {
+      font-family: var(--serif); font-size: 36px; font-weight: 300; line-height: 1;
+    }
+    .modal-stat-l {
+      font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--muted); margin-top: 3px;
+    }
+
+    .modal-rule { height: 1px; background: var(--ink); margin-bottom: 32px; }
+
+    /* Fight history table */
+    .fight-table { width: 100%; border-collapse: collapse; }
+
+    .fight-table thead th {
+      font-size: 8px; font-weight: 400; letter-spacing: 0.25em;
+      text-transform: uppercase; color: var(--muted);
+      padding: 0 0 12px; text-align: left;
+      border-bottom: 1px solid var(--rule);
+    }
+    .fight-table thead th.r { text-align: right; }
+
+    .fight-table tbody tr {
+      border-bottom: 1px solid var(--rule);
+      cursor: default; transition: background 0.1s;
+    }
+    .fight-table tbody tr:hover { background: var(--faint); }
+
+    .fight-table td {
+      padding: 13px 0; font-family: var(--mono);
+      font-size: 11px; font-weight: 300; vertical-align: middle;
+    }
+
+    .fight-table .f-date { color: var(--muted); white-space: nowrap; width: 96px; }
+
+    .fight-table .f-opp .name {
+      font-size: 17px; cursor: pointer;
+      transition: font-style 0.15s;
+    }
+    .fight-table .f-opp .name:hover { font-style: normal; text-decoration: underline; text-underline-offset: 3px; }
+
+    .fight-table .f-res { width: 32px; font-weight: 400; font-size: 12px; }
+    .f-res.win  { color: var(--ink); }
+    .f-res.loss { color: var(--muted); }
+    .f-res.draw { color: var(--muted); }
+    .f-res.nc   { color: var(--rule); }
+
+    .fight-table .f-method { width: 60px; color: var(--muted); font-size: 10px; }
+
+    .fight-table .f-elo { width: 70px; text-align: right; font-variant-numeric: tabular-nums; }
+
+    .fight-table .f-delta {
+      width: 64px; text-align: right;
+      font-variant-numeric: tabular-nums; font-size: 11px;
+    }
+    .f-delta.pos { color: var(--ink); }
+    .f-delta.neg { color: var(--muted); }
+
+    .fight-table .f-exp { width: 56px; text-align: right; color: var(--muted); font-size: 10px; }
+
+    .modal-loading {
+      padding: 48px 0; font-size: 10px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted);
     }
 
     /* ── Animations ── */
@@ -347,7 +271,6 @@
       from { opacity: 0; transform: translateY(14px); }
       to   { opacity: 1; transform: translateY(0); }
     }
-
     @keyframes line {
       from { transform: scaleX(0); }
       to   { transform: scaleX(1); }
@@ -355,17 +278,15 @@
 
     /* ── Responsive ── */
     @media (max-width: 800px) {
-      header, .rule, .rule-light, .controls, .table-wrap, .more-wrap, footer {
-        padding-left: 24px;
-        padding-right: 24px;
-      }
+      header, .rule, .rule-light, .controls, .table-wrap, .more-wrap, footer,
+      .modal { padding-left: 24px; padding-right: 24px; }
       .rule, .rule-light { margin-left: 24px; margin-right: 24px; }
       header { padding-top: 48px; }
       .header-stats { right: 24px; gap: 24px; }
       .stat-n { font-size: 30px; }
-      .col-fights, .col-streak,
+      td.fights-cell, td.streak-cell,
       th.col-fights-h, th.col-streak-h { display: none; }
-      td.fights-cell, td.streak-cell { display: none; }
+      .fight-table .f-exp, .fight-table .f-method { display: none; }
     }
   </style>
 </head>
@@ -436,11 +357,23 @@
   <div class="footer-brand">Elo</div>
 </footer>
 
+<!-- Fighter detail modal -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal-inner"></div>
+</div>
+
 <script>
+  /* ── State ── */
   const PAGE = 100;
   let all = [], filtered = [], shown = 0;
   let sortCol = 'peak_elo', sortAsc = false;
 
+  /* Fights data (lazy-loaded on first modal open) */
+  let fightsLoaded = false, fightsLoading = false;
+  let fightsIndex  = {}; // fighter_id -> [fight rows]
+  let fightsError  = false;
+
+  /* ── CSV parser ── */
   function parseCSV(raw) {
     const lines = raw.trim().split('\n');
     const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
@@ -459,7 +392,8 @@
     }).filter(r => r.fighter && r.fighter !== 'fighter');
   }
 
-  function fmt(v, decimals = 0) {
+  /* ── Leaderboard helpers ── */
+  function fmt(v) {
     const n = parseFloat(v);
     return isNaN(n) ? '—' : Math.round(n).toLocaleString();
   }
@@ -481,18 +415,16 @@
 
   function rows(data) {
     return data.map(f => {
-      const rank = f._rank;
-      const peak = parseFloat(f.peak_elo) || 0;
-      const curr = parseFloat(f.current_elo) || 0;
-      const delta = Math.round(curr - peak);
-      const deltaStr = delta === 0 ? ''
+      const rank  = f._rank;
+      const delta = Math.round((parseFloat(f.current_elo) || 0) - (parseFloat(f.peak_elo) || 0));
+      const dStr  = delta === 0 ? ''
         : `<span style="font-size:9px;color:var(--muted);margin-left:4px">${delta > 0 ? '+' : ''}${delta}</span>`;
 
-      return `<tr>
+      return `<tr data-id="${f.fighter_id}">
         <td class="rank-cell ${rankClass(rank)}">${String(rank).padStart(2, '0')}</td>
         <td><span class="name">${f.fighter}</span></td>
         <td class="r peak">${fmt(f.peak_elo)}</td>
-        <td class="r dim">${fmt(f.current_elo)}${deltaStr}</td>
+        <td class="r dim">${fmt(f.current_elo)}${dStr}</td>
         <td class="r dim fights-cell">${f.fights || '—'}</td>
         <td class="r streak-cell">${streak(f.win_streak)}</td>
       </tr>`;
@@ -500,13 +432,11 @@
   }
 
   function render() {
-    const slice = filtered.slice(0, shown);
-    document.getElementById('tbody').innerHTML = rows(slice);
+    document.getElementById('tbody').innerHTML = rows(filtered.slice(0, shown));
     document.getElementById('result-label').textContent =
       filtered.length < all.length
         ? `${filtered.length.toLocaleString()} of ${all.length.toLocaleString()} fighters`
         : '';
-
     const moreWrap = document.getElementById('more-wrap');
     const moreBtn  = document.getElementById('more-btn');
     if (shown < filtered.length) {
@@ -520,10 +450,9 @@
 
   function filter(q) {
     const s = q.toLowerCase().trim();
-    filtered = s ? all.filter(f =>
-      f.fighter.toLowerCase().includes(s) ||
-      (f.fighter_id || '').includes(s.replace(/ /g, '_'))
-    ) : [...all];
+    filtered = s
+      ? all.filter(f => f.fighter.toLowerCase().includes(s) || (f.fighter_id || '').includes(s.replace(/ /g, '_')))
+      : [...all];
     shown = PAGE;
     render();
   }
@@ -541,43 +470,184 @@
     });
 
     if (col === 'fighter') {
-      all.sort((a, b) => sortAsc
-        ? a.fighter.localeCompare(b.fighter)
-        : b.fighter.localeCompare(a.fighter));
+      all.sort((a, b) => sortAsc ? a.fighter.localeCompare(b.fighter) : b.fighter.localeCompare(a.fighter));
     } else {
       all.sort((a, b) => {
-        const av = parseFloat(a[col]) || 0;
-        const bv = parseFloat(b[col]) || 0;
+        const av = parseFloat(a[col]) || 0, bv = parseFloat(b[col]) || 0;
         return sortAsc ? av - bv : bv - av;
       });
     }
-    // Stamp true rank based on current sort order so search results show real position
     all.forEach((f, i) => f._rank = i + 1);
     filter(document.getElementById('search').value);
   }
 
-  async function init() {
+  /* ── Fights log loading ── */
+  async function ensureFights() {
+    if (fightsLoaded || fightsLoading) return;
+    fightsLoading = true;
     try {
-      const resp = await fetch('leaderboard.csv');
+      const resp = await fetch('fights_log.csv');
       if (!resp.ok) throw new Error(resp.status);
       const text = await resp.text();
-      all = parseCSV(text);
-      // Metadata
-      const fights = all.reduce((s, f) => s + (parseInt(f.fights) || 0), 0);
-      document.getElementById('stat-fighters').textContent = all.length.toLocaleString();
-      document.getElementById('stat-fights').textContent   = fights.toLocaleString();
-      sort('peak_elo');
+      const fightRows = text.trim().split('\n').slice(1); // skip header
+      const headers = text.trim().split('\n')[0].split(',').map(h => h.trim());
+
+      fightsIndex = {};
+      for (const line of fightRows) {
+        const vals = [];
+        let cur = '', q = false;
+        for (const ch of line) {
+          if (ch === '"') { q = !q; continue; }
+          if (ch === ',' && !q) { vals.push(cur); cur = ''; continue; }
+          cur += ch;
+        }
+        vals.push(cur);
+        const fight = {};
+        headers.forEach((h, i) => fight[h] = (vals[i] ?? '').trim());
+
+        [fight.fighter_a_id, fight.fighter_b_id].forEach(fid => {
+          if (!fightsIndex[fid]) fightsIndex[fid] = [];
+          fightsIndex[fid].push(fight);
+        });
+      }
+      fightsLoaded = true;
     } catch {
-      document.getElementById('table-wrap').innerHTML = `
-        <div class="error-state">
-          Could not load <code>leaderboard.csv</code><br><br>
-          Serve this directory with a local web server:<br>
-          <code>python -m http.server 8000</code><br><br>
-          Then open <code>http://localhost:8000</code> in your browser.
-        </div>`;
+      fightsError = true;
     }
+    fightsLoading = false;
   }
 
+  /* ── Modal ── */
+  function openModal() {
+    document.getElementById('modal-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function fightOutcome(fight, fighterId) {
+    const winner = fight.winner_id;
+    if (!winner) return fight.result === 'NC' ? { label: 'NC', cls: 'nc' } : { label: 'D', cls: 'draw' };
+    if (winner === fighterId) return { label: 'W', cls: 'win' };
+    return { label: 'L', cls: 'loss' };
+  }
+
+  function renderFightRow(fight, fighterId) {
+    const isA      = fight.fighter_a_id === fighterId;
+    const oppName  = isA ? fight.fighter_a === fight.fighter_b ? '—' : fight.fighter_b  : fight.fighter_a;
+    const oppId    = isA ? fight.fighter_b_id : fight.fighter_a_id;
+    const eloBefore = parseFloat(isA ? fight.elo_a_before : fight.elo_b_before) || 0;
+    const delta     = parseFloat(isA ? fight.delta_a     : fight.delta_b)     || 0;
+    const expWin    = isA ? parseFloat(fight.exp_a) : (1 - parseFloat(fight.exp_a));
+    const { label, cls } = fightOutcome(fight, fighterId);
+    const dSign    = delta >= 0 ? '+' : '';
+    const dCls     = delta >= 0 ? 'pos' : 'neg';
+
+    return `<tr>
+      <td class="f-date">${fight.date}</td>
+      <td class="f-opp"><span class="name" data-opp-id="${oppId}">${oppName}</span></td>
+      <td class="f-res ${cls}">${label}</td>
+      <td class="f-method">${fight.result || '—'}</td>
+      <td class="f-elo r">${Math.round(eloBefore).toLocaleString()}</td>
+      <td class="f-delta r ${dCls}">${dSign}${delta.toFixed(1)}</td>
+      <td class="f-exp r">${isNaN(expWin) ? '—' : Math.round(expWin * 100) + '%'}</td>
+    </tr>`;
+  }
+
+  async function showFighter(fighterId) {
+    const fighter = all.find(f => f.fighter_id === fighterId);
+    if (!fighter) return;
+
+    const inner = document.getElementById('modal-inner');
+    inner.innerHTML = `
+      <button class="modal-close" id="modal-close-btn">
+        <svg viewBox="0 0 12 12"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+        Close
+      </button>
+      <div class="modal-fighter-name">${fighter.fighter}</div>
+      <div class="modal-loading">Loading fight history…</div>`;
+
+    openModal();
+    document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+
+    await ensureFights();
+
+    if (fightsError) {
+      inner.querySelector('.modal-loading').textContent = 'Fight history unavailable — fights_log.csv not found.';
+      return;
+    }
+
+    const fights = (fightsIndex[fighterId] || []).slice().sort((a, b) => b.date.localeCompare(a.date));
+
+    let wins = 0, losses = 0, draws = 0, nc = 0;
+    for (const f of fights) {
+      const { label } = fightOutcome(f, fighterId);
+      if (label === 'W') wins++;
+      else if (label === 'L') losses++;
+      else if (label === 'D') draws++;
+      else nc++;
+    }
+
+    const record = `${wins}W · ${losses}L${draws ? ' · ' + draws + 'D' : ''}${nc ? ' · ' + nc + ' NC' : ''}`;
+    const peakElo = parseFloat(fighter.peak_elo) || 0;
+
+    inner.innerHTML = `
+      <button class="modal-close" id="modal-close-btn">
+        <svg viewBox="0 0 12 12"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+        Close
+      </button>
+      <div class="modal-fighter-name">${fighter.fighter}</div>
+      <div class="modal-stats">
+        <div class="modal-stat-block">
+          <div class="modal-stat-n">${Math.round(peakElo).toLocaleString()}</div>
+          <div class="modal-stat-l">Peak Elo</div>
+        </div>
+        <div class="modal-stat-block">
+          <div class="modal-stat-n">${Math.round(parseFloat(fighter.current_elo) || 0).toLocaleString()}</div>
+          <div class="modal-stat-l">Current Elo</div>
+        </div>
+        <div class="modal-stat-block">
+          <div class="modal-stat-n" style="font-size:28px;padding-top:4px">${record}</div>
+          <div class="modal-stat-l">UFC Record</div>
+        </div>
+        ${fighter.win_streak > 0 ? `<div class="modal-stat-block">
+          <div class="modal-stat-n">${fighter.win_streak}</div>
+          <div class="modal-stat-l">Win Streak</div>
+        </div>` : ''}
+      </div>
+      <div class="modal-rule"></div>
+      ${fights.length === 0
+        ? '<p style="font-size:11px;color:var(--muted);letter-spacing:0.08em">No fight data available.</p>'
+        : `<table class="fight-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Opponent</th>
+                <th>W/L</th>
+                <th>Method</th>
+                <th class="r">Elo</th>
+                <th class="r">Δ</th>
+                <th class="r">Expected</th>
+              </tr>
+            </thead>
+            <tbody>${fights.map(f => renderFightRow(f, fighterId)).join('')}</tbody>
+          </table>`}`;
+
+    document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+
+    // Opponent name clicks — navigate to that fighter's modal
+    inner.querySelectorAll('[data-opp-id]').forEach(el => {
+      el.addEventListener('click', e => {
+        e.stopPropagation();
+        showFighter(el.dataset.oppId);
+      });
+    });
+  }
+
+  /* ── Event wiring ── */
   document.getElementById('search').addEventListener('input', e => filter(e.target.value));
   document.getElementById('more-btn').addEventListener('click', () => {
     shown = Math.min(shown + PAGE, filtered.length);
@@ -586,6 +656,50 @@
   document.querySelectorAll('th[data-sort]').forEach(th =>
     th.addEventListener('click', () => sort(th.dataset.sort))
   );
+
+  // Row click → open fighter modal (event delegation)
+  document.getElementById('tbody').addEventListener('click', e => {
+    const row = e.target.closest('tr[data-id]');
+    if (row) showFighter(row.dataset.id);
+  });
+
+  // Close modal on overlay click (outside modal inner)
+  document.getElementById('modal-overlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('modal-overlay')) closeModal();
+  });
+
+  // Close modal on Escape
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  // Prefetch fights data after leaderboard loads so first click is instant
+  function prefetchFights() {
+    setTimeout(ensureFights, 2000);
+  }
+
+  /* ── Init ── */
+  async function init() {
+    try {
+      const resp = await fetch('leaderboard.csv');
+      if (!resp.ok) throw new Error(resp.status);
+      const text = await resp.text();
+      all = parseCSV(text);
+      const totalFights = all.reduce((s, f) => s + (parseInt(f.fights) || 0), 0);
+      document.getElementById('stat-fighters').textContent = all.length.toLocaleString();
+      document.getElementById('stat-fights').textContent   = totalFights.toLocaleString();
+      sort('peak_elo');
+      prefetchFights();
+    } catch {
+      document.getElementById('table-wrap').innerHTML = `
+        <div class="error-state">
+          Could not load <code>leaderboard.csv</code><br><br>
+          Serve this directory with a local web server:<br>
+          <code>python -m http.server 8000</code><br><br>
+          Then open <code>http://localhost:8000</code>
+        </div>`;
+    }
+  }
 
   init();
 </script>
