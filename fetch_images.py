@@ -19,15 +19,18 @@ FIGHTERS_DIR.mkdir(exist_ok=True)
 
 TOP_N       = 15
 SLEEP_SEC   = 0.4         # polite delay between requests
-ACTIVE_DAYS = 18 * 30     # 18 months
-
 DIVISIONS = [
     "Heavyweight", "Light Heavyweight", "Middleweight",
     "Welterweight", "Lightweight", "Featherweight", "Bantamweight",
     "Flyweight", "Women's Strawweight", "Women's Flyweight", "Women's Bantamweight",
 ]
 
-cutoff = (date.today() - timedelta(days=ACTIVE_DAYS)).isoformat()
+# 18 calendar months back (not 18*30 days — avoids off-by-a-few-days edge cases)
+today = date.today()
+cutoff_month = today.month - 18
+cutoff_year  = today.year + cutoff_month // 12 if cutoff_month <= 0 else today.year
+cutoff_month = cutoff_month % 12 or 12
+cutoff = date(cutoff_year, cutoff_month, today.day).isoformat()
 
 SESSION = requests.Session()
 SESSION.headers["User-Agent"] = (

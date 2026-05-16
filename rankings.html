@@ -482,7 +482,7 @@
 <!-- View toggle -->
 <div class="view-toggle">
   <button class="view-btn active" id="view-rankings-btn">Rankings</button>
-  <button class="view-btn" id="view-leaderboard-btn">Leaderboard</button>
+  <button class="view-btn" id="view-leaderboard-btn">GOAT Rankings</button>
 </div>
 
 <!-- Weight class tabs (shared) -->
@@ -786,7 +786,7 @@
     document.getElementById('mode-alltime').classList.toggle('active', !isCurrent);
     document.getElementById('mode-desc').textContent = isCurrent
       ? 'Active fighters · Sorted by current Elo'
-      : 'All-time · Sorted by peak Elo';
+      : 'All-time peak Elo · Greatest of all time';
 
     const newSortCol = isCurrent ? 'current_elo' : 'peak_elo';
     sortAsc = false;
