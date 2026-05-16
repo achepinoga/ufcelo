@@ -3,14 +3,19 @@ import unicodedata
 from schema import ResultType
 
 METHOD_MAP = {
-    "ko/tko":                       ResultType.TKO,   # ufcstats uses "KO/TKO" for both
+    # ufcstats.com abbreviated formats (event listing page)
+    "ko/tko":                       ResultType.TKO,   # ufcstats groups KO and TKO together
+    "u-dec":                        ResultType.UNANIMOUS_DECISION,
+    "s-dec":                        ResultType.SPLIT_DECISION,
+    "m-dec":                        ResultType.MAJORITY_DECISION,
+    "sub":                          ResultType.SUBMISSION,
+    # Long-form equivalents
     "knockout":                     ResultType.KO,
     "tko":                          ResultType.TKO,
     "technical knockout":           ResultType.TKO,
     "tko - doctor's stoppage":      ResultType.TKO,
     "doctor stoppage":              ResultType.TKO,
     "submission":                   ResultType.SUBMISSION,
-    "sub":                          ResultType.SUBMISSION,
     "decision - unanimous":         ResultType.UNANIMOUS_DECISION,
     "unanimous decision":           ResultType.UNANIMOUS_DECISION,
     "decision - split":             ResultType.SPLIT_DECISION,
@@ -27,6 +32,8 @@ METHOD_MAP = {
     "overturned":                   ResultType.NO_CONTEST,
     "dq":                           ResultType.DISQUALIFICATION,
     "disqualification":             ResultType.DISQUALIFICATION,
+    # Early UFC (pre-2001) used "Other" for non-standard results (draws, time-limit draws)
+    "other":                        ResultType.DRAW,
 }
 
 # Known fighter name aliases -> canonical ID
