@@ -472,16 +472,16 @@
     return `<span class="streak-num">${num}</span><span class="streak-pip" style="color:var(--ink)">${'●'.repeat(filled)}</span><span class="streak-pip" style="color:var(--rule)">${'●'.repeat(empty)}</span>`;
   }
 
-  function rankClass(i) {
-    if (i === 0) return 'gold';
-    if (i === 1) return 'silver';
-    if (i === 2) return 'bronze';
+  function rankClass(rank) {
+    if (rank === 1) return 'gold';
+    if (rank === 2) return 'silver';
+    if (rank === 3) return 'bronze';
     return '';
   }
 
-  function rows(data, offset) {
-    return data.map((f, i) => {
-      const rank = offset + i + 1;
+  function rows(data) {
+    return data.map(f => {
+      const rank = f._rank;
       const peak = parseFloat(f.peak_elo) || 0;
       const curr = parseFloat(f.current_elo) || 0;
       const delta = Math.round(curr - peak);
@@ -489,7 +489,7 @@
         : `<span style="font-size:9px;color:var(--muted);margin-left:4px">${delta > 0 ? '+' : ''}${delta}</span>`;
 
       return `<tr>
-        <td class="rank-cell ${rankClass(offset + i)}">${String(rank).padStart(2, '0')}</td>
+        <td class="rank-cell ${rankClass(rank)}">${String(rank).padStart(2, '0')}</td>
         <td><span class="name">${f.fighter}</span></td>
         <td class="r peak">${fmt(f.peak_elo)}</td>
         <td class="r dim">${fmt(f.current_elo)}${deltaStr}</td>
@@ -501,7 +501,7 @@
 
   function render() {
     const slice = filtered.slice(0, shown);
-    document.getElementById('tbody').innerHTML = rows(slice, 0);
+    document.getElementById('tbody').innerHTML = rows(slice);
     document.getElementById('result-label').textContent =
       filtered.length < all.length
         ? `${filtered.length.toLocaleString()} of ${all.length.toLocaleString()} fighters`
@@ -551,6 +551,8 @@
         return sortAsc ? av - bv : bv - av;
       });
     }
+    // Stamp true rank based on current sort order so search results show real position
+    all.forEach((f, i) => f._rank = i + 1);
     filter(document.getElementById('search').value);
   }
 
