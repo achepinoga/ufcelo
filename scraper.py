@@ -80,7 +80,8 @@ def scrape_event(event: dict) -> list:
         if len(cols) < 8:
             continue
 
-        # Fighter names — two <p> tags inside the second column
+        # Fighter names — winner always listed first on ufcstats
+        # Names may be in <p> tags with nested <a> links, or plain text
         fighter_paras = cols[1].select("p.b-fight-details__table-text")
         if len(fighter_paras) < 2:
             continue
@@ -89,25 +90,27 @@ def scrape_event(event: dict) -> list:
         if not name_a or not name_b:
             continue
 
-        # Winner determination — first column has win/loss indicators per fighter
-        # ufcstats uses green "W" for winner row; first fighter listed is always winner
-        # when there is a winner. For draws/NC the column is empty or shows "D"/"NC".
+        # Winner determination — ufcstats always lists the winner first.
+        # col[0] has a green "b-flag_style_green" anchor for the winning fighter.
+        # BeautifulSoup class_ kwarg matches if the class is present (multi-class safe).
+        green_flag = cols[0].find("a", class_="b-flag_style_green")
         result_col_text = cols[0].get_text(separator=" ", strip=True).lower()
-        if "draw" in result_col_text or "nc" in result_col_text or "no contest" in result_col_text:
+        if green_flag:
+            winner_name = name_a   # green flag always on first-listed (winner)
+        elif any(x in result_col_text for x in ("draw", "nc", "no contest", "overturned")):
             winner_name = None
         else:
-            # On ufcstats, the winner is always listed first in the fighters column
-            winner_name = name_a
+            winner_name = None     # unknown — treat conservatively
 
-        # Method — column index 7 (0-based)
-        method_text = cols[7].get_text(strip=True) if len(cols) > 7 else ""
-        # Method detail (e.g. "Unanimous" or "Split") — sometimes in column 8
+        # Method — col[7] on ufcstats event pages (e.g. "KO/TKO", "U-DEC", "S-DEC", "SUB")
+        # col[8] is the round number — pass as detail so normalize_result can use it if needed
+        method_text  = cols[7].get_text(strip=True) if len(cols) > 7 else ""
         method_detail = cols[8].get_text(strip=True) if len(cols) > 8 else ""
 
-        # Weight class — column index 6
+        # Weight class — col[6]
         weight_class = cols[6].get_text(strip=True) if len(cols) > 6 else "Unknown"
 
-        # Normalize method — draws and NCs are often in the method column
+        # NC/draw can also appear in the method column — avoid "nc" substring (hits "punches")
         if any(x in method_text.lower() for x in ("draw", "no contest", "overturned")):
             winner_name = None
 
@@ -134,6 +137,62 @@ def scrape_event(event: dict) -> list:
         ))
 
     return fights
+
+
+def get_upcoming_events() -> list:
+    """Returns list of {name, url, date} for announced upcoming UFC events."""
+    url = "http://ufcstats.com/statistics/events/upcoming?page=all"
+    print("Fetching upcoming events from ufcstats.com...")
+    soup = _get(url)
+
+    events = []
+    for row in soup.select("tr.b-statistics__table-row"):
+        link = row.select_one("a.b-link")
+        if not link:
+            continue
+        date_span = row.select_one("span.b-statistics__date")
+        if not date_span:
+            continue
+        try:
+            event_date = datetime.strptime(date_span.text.strip(), "%B %d, %Y").date()
+        except ValueError:
+            continue
+        events.append({
+            "name": link.text.strip(),
+            "url":  link["href"],
+            "date": event_date,
+        })
+
+    events.sort(key=lambda e: e["date"])
+    print(f"Found {len(events)} upcoming events")
+    return events
+
+
+def scrape_event_details(event: dict) -> dict:
+    """Scrapes location and announced card from an event page (works for upcoming and past)."""
+    soup = _get(event["url"])
+
+    location = ""
+    for li in soup.select("li.b-list__box-list-item"):
+        txt = li.get_text(" ", strip=True)
+        if "Location:" in txt:
+            location = txt.replace("Location:", "").strip()
+            break
+
+    card = []
+    for row in soup.select("tr.b-fight-details__table-row[data-link]"):
+        cols = row.select("td.b-fight-details__table-col")
+        if len(cols) < 2:
+            continue
+        paras = cols[1].select("p.b-fight-details__table-text")
+        if len(paras) < 2:
+            continue
+        name_a = paras[0].get_text(strip=True)
+        name_b = paras[1].get_text(strip=True)
+        if name_a and name_b and name_a != name_b:
+            card.append({"fighter_a": name_a, "fighter_b": name_b})
+
+    return {"location": location, "card": card}
 
 
 def scrape_events(events: list, checkpoint_cb=None) -> list:

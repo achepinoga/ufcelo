@@ -3,267 +3,462 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UFC Elo — Fighter Rankings</title>
+  <title>UFC Elo — The Underground Rankings</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,600&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,700;1,400;1,700&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --ink:    #0C0C0B;
-      --paper:  #F7F7F4;
-      --rule:   #E2E2DC;
-      --muted:  #999990;
-      --faint:  #F0F0EC;
-      --serif:  'Cormorant Garamond', Georgia, serif;
-      --mono:   'IBM Plex Mono', 'Courier New', monospace;
+      --ink:     #1A1A1A;
+      --paper:   #F2EFE6;
+      --rule:    #C8BCA8;
+      --muted:   #7A6E60;
+      --faint:   #E8E3D8;
+      --red:     #B91C1C;
+      --display: 'Bebas Neue', 'Arial Black', sans-serif;
+      --serif:   'Playfair Display', Georgia, serif;
+      --mono:    'IBM Plex Mono', 'Courier New', monospace;
     }
 
     html { font-size: 16px; scroll-behavior: smooth; }
-    body { background: var(--paper); color: var(--ink); font-family: var(--mono); min-height: 100vh; }
+    body { background: var(--paper); color: var(--ink); font-family: var(--mono); overflow-x: hidden; }
 
-    /* ── Header ── */
-    header { padding: 72px 64px 0; position: relative; }
+    /* ── Registration marks ── */
+    .reg-marks {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none; z-index: 0;
+    }
+    .reg-marks::before,
+    .reg-marks::after {
+      content: '+';
+      position: absolute;
+      font-family: var(--mono); font-size: 11px;
+      color: rgba(26,26,26,0.15); letter-spacing: 0;
+    }
+    .reg-marks::before { top: 20px; left: 20px; }
+    .reg-marks::after  { top: 20px; right: 20px; }
 
-    .eyebrow {
-      font-size: 9px; font-weight: 400; letter-spacing: 0.3em;
-      text-transform: uppercase; color: var(--muted);
-      opacity: 0; animation: up 0.7s ease 0.1s forwards;
+    /* ── Top nav ── */
+    .topnav {
+      position: relative; z-index: 10;
+      padding: 18px 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(200,188,168,0.5);
+    }
+    .topnav-logo {
+      font-family: var(--display); font-size: 20px; letter-spacing: 0.18em;
+      color: var(--ink); text-decoration: none;
+    }
+    .topnav-links {
+      display: flex; gap: 32px; list-style: none;
+    }
+    .topnav-links a {
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.25em;
+      text-transform: uppercase; color: var(--muted); text-decoration: none;
+      transition: color 0.15s;
+    }
+    .topnav-links a:hover { color: var(--red); }
+
+    /* ── Hero ── */
+    .hero {
+      position: relative; width: 100%; height: 85vh; min-height: 500px;
+      overflow: hidden;
+    }
+    .hero-img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center;
+      display: block;
+      filter: contrast(1.05) brightness(0.88);
     }
 
-    .title {
-      font-family: var(--serif);
-      font-size: clamp(72px, 11vw, 132px);
-      font-weight: 300; line-height: 0.88; letter-spacing: -0.025em; margin-top: 18px;
-      opacity: 0; animation: up 0.7s ease 0.2s forwards;
+    /* Aged paper vignette overlay */
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(to bottom, rgba(242,239,230,0.35) 0%, transparent 30%),
+        linear-gradient(to top, rgba(242,239,230,0.92) 0%, rgba(242,239,230,0.3) 40%, transparent 70%),
+        linear-gradient(to right, rgba(242,239,230,0.4) 0%, transparent 25%),
+        linear-gradient(to left, rgba(242,239,230,0.4) 0%, transparent 25%);
     }
-    .title em { font-style: italic; font-weight: 300; }
 
-    .header-stats {
-      position: absolute; right: 64px; bottom: 0; text-align: right;
-      opacity: 0; animation: up 0.7s ease 0.3s forwards;
-      display: flex; gap: 40px;
+    /* Red top accent bar */
+    .hero-top-rule {
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 4px; background: var(--red);
     }
-    .stat-block { text-align: right; }
-    .stat-n { font-family: var(--serif); font-size: 42px; font-weight: 300; line-height: 1; }
-    .stat-l { font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
 
-    /* ── Rules ── */
-    .rule {
-      height: 1px; background: var(--ink); margin: 36px 64px 0;
+    /* Hero text */
+    .hero-content {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 0 64px 56px;
+    }
+    .hero-eyebrow {
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.4em;
+      text-transform: uppercase; color: var(--red);
+      margin-bottom: 12px;
+      opacity: 0; animation: up 0.8s ease 0.3s forwards;
+    }
+    .hero-title {
+      font-family: var(--display);
+      font-size: clamp(64px, 11vw, 148px);
+      line-height: 0.85; letter-spacing: 0.04em;
+      color: var(--ink);
+      opacity: 0; animation: up 0.8s ease 0.5s forwards;
+    }
+    .hero-subtitle {
+      font-family: var(--serif); font-style: italic; font-weight: 400;
+      font-size: clamp(18px, 2.5vw, 28px);
+      color: var(--muted); margin-top: 16px; letter-spacing: 0.01em;
+      opacity: 0; animation: up 0.8s ease 0.7s forwards;
+    }
+
+    /* ── Red rule ── */
+    .red-rule {
+      height: 4px; background: var(--red); margin: 0 64px;
       transform: scaleX(0); transform-origin: left;
-      animation: line 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+      animation: line 1s cubic-bezier(0.16, 1, 0.3, 1) 0.9s forwards;
     }
-    .rule-light { height: 1px; background: var(--rule); margin: 0 64px; }
+    .thin-rule { height: 1px; background: var(--rule); margin: 0 64px; }
 
-    /* ── Controls ── */
-    .controls {
-      padding: 20px 64px; display: flex; align-items: center;
-      justify-content: space-between; gap: 24px;
-      opacity: 0; animation: up 0.5s ease 0.9s forwards;
+    /* ── Section ── */
+    .section { padding: 72px 64px; position: relative; }
+    .section-label {
+      font-family: var(--mono); font-size: 8px; letter-spacing: 0.4em;
+      text-transform: uppercase; color: var(--red);
+      margin-bottom: 8px;
     }
-    .search-wrap { position: relative; flex: 0 0 300px; }
-    .search-input {
-      width: 100%; background: none; border: none;
-      border-bottom: 1px solid var(--rule);
-      padding: 7px 60px 7px 0;
-      font-family: var(--mono); font-size: 12px; font-weight: 300;
-      color: var(--ink); outline: none; letter-spacing: 0.04em;
-      transition: border-color 0.2s;
+    .section-heading {
+      font-family: var(--display); font-size: clamp(42px, 6vw, 80px);
+      letter-spacing: 0.04em; line-height: 0.9;
+      margin-bottom: 48px;
     }
-    .search-input::placeholder { color: var(--muted); }
-    .search-input:focus { border-color: var(--ink); }
-    .search-hint {
-      position: absolute; right: 0; top: 7px;
-      font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase;
-      color: var(--muted); pointer-events: none;
-    }
-    .result-label { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
 
-    /* ── Table ── */
-    .table-wrap { padding: 0 64px; opacity: 0; animation: up 0.5s ease 1.1s forwards; }
+    /* ── Top 5 ── */
+    .top5-grid { display: flex; flex-direction: column; gap: 0; }
 
-    table { width: 100%; border-collapse: collapse; }
-    colgroup .col-rank   { width: 68px; }
-    colgroup .col-peak   { width: 110px; }
-    colgroup .col-curr   { width: 110px; }
-    colgroup .col-fights { width: 80px; }
-    colgroup .col-streak { width: 120px; }
-
-    thead th {
-      font-size: 8px; font-weight: 400; letter-spacing: 0.28em;
-      text-transform: uppercase; color: var(--muted);
-      padding: 14px 0; text-align: left;
-      border-bottom: 1px solid var(--rule);
-      white-space: nowrap; user-select: none;
-    }
-    thead th.r { text-align: right; }
-    thead th[data-sort] { cursor: pointer; transition: color 0.15s; }
-    thead th[data-sort]:hover { color: var(--ink); }
-    thead th.sorted { color: var(--ink); }
-    thead th.sorted::after { content: ' ↓'; font-size: 7px; }
-    thead th.sorted.asc::after { content: ' ↑'; }
-
-    tbody tr {
+    .top5-row {
+      display: grid;
+      grid-template-columns: 72px 1fr 120px 120px;
+      align-items: center;
+      padding: 20px 0;
       border-bottom: 1px solid var(--rule);
       cursor: pointer;
       transition: background 0.12s;
+      text-decoration: none; color: inherit;
     }
-    tbody tr:hover { background: var(--faint); }
-    tbody tr:hover .name { font-style: normal; letter-spacing: 0.005em; }
+    .top5-row:first-child { border-top: 1px solid var(--rule); }
+    .top5-row:hover { background: var(--faint); }
+    .top5-row:hover .t5-name { color: var(--red); }
 
-    td { padding: 15px 0; font-family: var(--mono); font-size: 12px; font-weight: 300; vertical-align: middle; }
-    td.rank-cell { font-size: 10px; color: var(--muted); letter-spacing: 0.06em; padding-right: 12px; }
-    td.rank-cell.gold   { color: var(--ink); font-weight: 400; }
-    td.rank-cell.silver { color: #777; font-weight: 400; }
-    td.rank-cell.bronze { color: #999; }
+    .t5-rank {
+      font-family: var(--display); font-size: 22px;
+      letter-spacing: 0.06em; color: var(--muted);
+    }
+    .t5-rank.first { color: var(--red); font-size: 28px; }
 
-    .name {
-      font-family: var(--serif); font-size: 19px; font-weight: 400; font-style: italic;
-      letter-spacing: 0.008em; transition: font-style 0.2s, letter-spacing 0.2s;
+    .t5-name {
+      font-family: var(--serif); font-size: clamp(22px, 3vw, 30px);
+      font-weight: 700; font-style: italic;
+      letter-spacing: 0.005em;
+      transition: color 0.15s;
     }
 
-    td.r { text-align: right; font-variant-numeric: tabular-nums; }
-    td.peak { font-weight: 400; }
-    td.dim  { color: var(--muted); }
-
-    .streak-pip { display: inline-block; font-size: 6px; letter-spacing: 1.5px; vertical-align: middle; }
-    .streak-num { display: inline-block; min-width: 20px; margin-right: 6px; }
-
-    /* ── Load more ── */
-    .more-wrap { text-align: center; padding: 48px 64px; }
-    .more-btn {
-      background: none; border: 1px solid var(--rule);
-      padding: 13px 36px; font-family: var(--mono);
-      font-size: 9px; font-weight: 400; letter-spacing: 0.28em; text-transform: uppercase;
-      color: var(--muted); cursor: pointer; transition: border-color 0.2s, color 0.2s;
+    .t5-elo-wrap { text-align: right; }
+    .t5-elo {
+      font-family: var(--display); font-size: 28px;
+      letter-spacing: 0.04em; color: var(--ink);
     }
-    .more-btn:hover { border-color: var(--ink); color: var(--ink); }
+    .t5-elo-label {
+      font-family: var(--mono); font-size: 7px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted); margin-top: 2px;
+    }
+
+    .t5-fights-wrap { text-align: right; }
+    .t5-fights {
+      font-family: var(--mono); font-size: 13px;
+      color: var(--muted); font-weight: 300;
+    }
+    .t5-fights-label {
+      font-family: var(--mono); font-size: 7px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted); margin-top: 2px;
+    }
+
+    .see-all-wrap {
+      margin-top: 40px; display: flex; align-items: center; gap: 20px;
+    }
+    .see-all-btn {
+      display: inline-flex; align-items: center; gap: 12px;
+      font-family: var(--display); font-size: 20px; letter-spacing: 0.08em;
+      color: var(--ink); text-decoration: none;
+      padding: 14px 32px;
+      border: 2px solid var(--ink);
+      transition: background 0.2s, color 0.2s;
+    }
+    .see-all-btn:hover { background: var(--red); border-color: var(--red); color: var(--paper); }
+    .see-all-btn .arrow { font-family: var(--mono); font-size: 16px; }
+
+    .top5-error {
+      font-family: var(--mono); font-size: 11px; color: var(--muted);
+      letter-spacing: 0.05em; padding: 32px 0;
+    }
+
+    /* ── Events grid ── */
+    .events-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 2px;
+    }
+
+    /* Fight card poster style */
+    .event-card {
+      position: relative; overflow: hidden;
+      min-height: 260px;
+      text-decoration: none; color: inherit;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .event-card:hover { transform: scale(1.01); }
+
+    /* Background image when available */
+    .ec-img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center;
+      filter: brightness(0.55) contrast(1.1);
+    }
+
+    /* Fallback gradient when no image */
+    .ec-bg-fallback {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(135deg, var(--ink) 0%, #2A1818 60%, #3A0A0A 100%);
+    }
+
+    /* Paper grain overlay */
+    .ec-grain {
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+      mix-blend-mode: multiply; pointer-events: none;
+    }
+
+    /* Bottom gradient for text legibility */
+    .ec-vignette {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.05) 100%);
+    }
+
+    /* Red accent top bar */
+    .ec-topbar {
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 3px; background: var(--red);
+    }
+
+    .ec-content {
+      position: relative; z-index: 2;
+      padding: 24px 24px 20px;
+    }
+
+    .ec-badge {
+      font-family: var(--mono); font-size: 7px; letter-spacing: 0.3em;
+      text-transform: uppercase; color: var(--red);
+      border: 1px solid var(--red); padding: 3px 8px;
+      display: inline-block; margin-bottom: 12px;
+    }
+
+    .ec-main-event {
+      font-family: var(--display);
+      font-size: clamp(22px, 3.5vw, 32px);
+      letter-spacing: 0.04em; line-height: 0.95;
+      color: #FFFFFF; margin-bottom: 10px;
+    }
+    .ec-vs {
+      font-family: var(--mono); font-size: 9px;
+      letter-spacing: 0.2em; color: var(--red);
+      text-transform: uppercase; margin: 2px 0;
+      display: block;
+    }
+
+    .ec-event-name {
+      font-family: var(--mono); font-size: 9px; font-weight: 400;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(255,255,255,0.5); margin-bottom: 4px;
+    }
+
+    .ec-meta {
+      display: flex; gap: 16px; align-items: center;
+      border-top: 1px solid rgba(255,255,255,0.15);
+      padding-top: 10px; margin-top: 12px;
+    }
+    .ec-date {
+      font-family: var(--mono); font-size: 9px; font-weight: 300;
+      color: rgba(255,255,255,0.5); letter-spacing: 0.06em;
+    }
+    .ec-location {
+      font-family: var(--mono); font-size: 9px; font-weight: 300;
+      color: rgba(255,255,255,0.35); letter-spacing: 0.04em;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* Card bouts below main */
+    .ec-bouts {
+      position: relative; z-index: 2;
+      padding: 0 24px 16px;
+      display: flex; flex-direction: column; gap: 5px;
+    }
+    .ec-bout {
+      font-family: var(--mono); font-size: 9px; font-weight: 300;
+      color: rgba(255,255,255,0.4); letter-spacing: 0.02em;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .ec-more {
+      font-family: var(--mono); font-size: 8px; letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.25);
+    }
+
+    /* ── Recent events list ── */
+    .events-list { display: flex; flex-direction: column; }
+
+    .recent-row {
+      display: grid;
+      grid-template-columns: 100px 1fr 80px 100px;
+      align-items: center;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--rule);
+      text-decoration: none; color: inherit;
+      transition: background 0.12s;
+      cursor: pointer;
+    }
+    .recent-row:first-child { border-top: 1px solid var(--rule); }
+    .recent-row:hover { background: var(--faint); }
+    .recent-row:hover .rr-name { color: var(--red); }
+
+    .rr-date {
+      font-family: var(--mono); font-size: 10px; font-weight: 300;
+      color: var(--muted); padding-right: 16px;
+    }
+
+    .rr-name {
+      font-family: var(--display); font-size: 20px; letter-spacing: 0.03em;
+      transition: color 0.15s;
+    }
+
+    .rr-main {
+      font-family: var(--mono); font-size: 9px; font-weight: 300;
+      color: var(--muted); margin-top: 3px; letter-spacing: 0.02em;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    .rr-fights {
+      font-family: var(--display); font-size: 22px; letter-spacing: 0.04em;
+      text-align: right; color: var(--muted);
+    }
+    .rr-fights-lbl {
+      font-family: var(--mono); font-size: 7px; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--muted); text-align: right;
+    }
+
+    .rr-arrow {
+      font-family: var(--mono); font-size: 16px; color: var(--rule);
+      text-align: right; transition: color 0.15s;
+    }
+    .recent-row:hover .rr-arrow { color: var(--red); }
+
+    /* ── Elo explanation ── */
+    .elo-section {
+      padding: 72px 64px;
+      background: var(--ink); color: var(--paper);
+    }
+    .elo-section .section-label { color: var(--red); }
+    .elo-section .section-heading { color: var(--paper); }
+    .elo-section .thin-rule { background: rgba(242,239,230,0.2); margin: 0; }
+
+    .elo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      margin-top: 0;
+    }
+
+    .elo-card {
+      padding: 40px 40px 40px 0;
+      border-right: 1px solid rgba(242,239,230,0.15);
+    }
+    .elo-card:last-child { border-right: none; padding-right: 0; }
+    .elo-card:not(:first-child) { padding-left: 40px; }
+
+    .elo-card-icon {
+      font-family: var(--display); font-size: 48px;
+      color: var(--red); line-height: 1; margin-bottom: 16px;
+      letter-spacing: 0.04em;
+    }
+    .elo-card-title {
+      font-family: var(--display); font-size: 22px;
+      letter-spacing: 0.08em; color: var(--paper);
+      margin-bottom: 12px;
+    }
+    .elo-card-text {
+      font-family: var(--mono); font-size: 11px; font-weight: 300;
+      line-height: 1.9; color: rgba(242,239,230,0.6);
+      letter-spacing: 0.03em;
+    }
+    .elo-card-text strong { color: var(--paper); font-weight: 400; }
+
+    /* Multiplier table */
+    .multipliers {
+      margin-top: 64px;
+      padding-top: 48px;
+      border-top: 1px solid rgba(242,239,230,0.15);
+    }
+    .mult-label {
+      font-family: var(--mono); font-size: 8px; letter-spacing: 0.4em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 32px;
+    }
+    .mult-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1px;
+      background: rgba(242,239,230,0.1);
+    }
+    .mult-cell {
+      background: var(--ink);
+      padding: 20px 24px;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .mult-method {
+      font-family: var(--display); font-size: 20px;
+      letter-spacing: 0.06em; color: var(--paper);
+    }
+    .mult-val {
+      font-family: var(--mono); font-size: 22px; font-weight: 300;
+      color: var(--red);
+    }
 
     /* ── Footer ── */
     footer {
-      padding: 40px 64px 64px; display: flex;
-      justify-content: space-between; align-items: flex-end;
-      border-top: 1px solid var(--rule);
-    }
-    .footer-note { font-size: 9px; line-height: 2; color: var(--muted); letter-spacing: 0.08em; }
-    .footer-brand {
-      font-family: var(--serif); font-size: 56px; font-weight: 300; font-style: italic;
-      color: var(--rule); line-height: 1; letter-spacing: -0.02em; user-select: none;
+      padding: 48px 64px 64px; position: relative;
+      border-top: 4px solid var(--red);
     }
 
-    /* ── Error state ── */
-    .error-state {
-      padding: 80px 64px; font-size: 11px; font-weight: 300;
-      line-height: 2.2; color: var(--muted); letter-spacing: 0.05em;
-    }
-    .error-state code {
-      font-family: var(--mono); font-size: 12px; color: var(--ink);
-      background: var(--faint); padding: 2px 8px;
+    .footer-inner {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      flex-wrap: wrap; gap: 32px;
     }
 
-    /* ── Fighter Modal ── */
-    .modal-overlay {
-      position: fixed; inset: 0; z-index: 200;
-      background: rgba(247, 247, 244, 0.97);
-      overflow-y: auto;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.22s ease;
+    .footer-info {}
+    .footer-headline {
+      font-family: var(--display); font-size: clamp(28px, 4vw, 48px);
+      letter-spacing: 0.04em; line-height: 1; margin-bottom: 16px;
     }
-    .modal-overlay.open { opacity: 1; pointer-events: all; }
-
-    .modal {
-      max-width: 960px; margin: 0 auto;
-      padding: 56px 64px 80px;
-      transform: translateY(18px);
-      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    .footer-detail {
+      font-family: var(--mono); font-size: 9px; line-height: 2.2;
+      color: var(--muted); letter-spacing: 0.08em;
     }
-    .modal-overlay.open .modal { transform: translateY(0); }
-
-    .modal-close {
-      display: flex; align-items: center; gap: 10px;
-      background: none; border: none; cursor: pointer;
-      font-family: var(--mono); font-size: 9px; font-weight: 400;
-      letter-spacing: 0.25em; text-transform: uppercase;
-      color: var(--muted); padding: 0; margin-bottom: 48px;
-      transition: color 0.15s;
-    }
-    .modal-close:hover { color: var(--ink); }
-    .modal-close svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 1.5; }
-
-    .modal-fighter-name {
-      font-family: var(--serif); font-size: clamp(48px, 7vw, 88px);
-      font-weight: 300; font-style: italic; line-height: 0.9;
-      letter-spacing: -0.02em; margin-bottom: 32px;
-    }
-
-    .modal-stats {
-      display: flex; gap: 48px; margin-bottom: 40px; flex-wrap: wrap;
-    }
-    .modal-stat-block {}
-    .modal-stat-n {
-      font-family: var(--serif); font-size: 36px; font-weight: 300; line-height: 1;
-    }
-    .modal-stat-l {
-      font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase;
-      color: var(--muted); margin-top: 3px;
-    }
-
-    .modal-rule { height: 1px; background: var(--ink); margin-bottom: 32px; }
-
-    /* Fight history table */
-    .fight-table { width: 100%; border-collapse: collapse; }
-
-    .fight-table thead th {
-      font-size: 8px; font-weight: 400; letter-spacing: 0.25em;
-      text-transform: uppercase; color: var(--muted);
-      padding: 0 0 12px; text-align: left;
-      border-bottom: 1px solid var(--rule);
-    }
-    .fight-table thead th.r { text-align: right; }
-
-    .fight-table tbody tr {
-      border-bottom: 1px solid var(--rule);
-      cursor: default; transition: background 0.1s;
-    }
-    .fight-table tbody tr:hover { background: var(--faint); }
-
-    .fight-table td {
-      padding: 13px 0; font-family: var(--mono);
-      font-size: 11px; font-weight: 300; vertical-align: middle;
-    }
-
-    .fight-table .f-date { color: var(--muted); white-space: nowrap; width: 96px; }
-
-    .fight-table .f-opp .name {
-      font-size: 17px; cursor: pointer;
-      transition: font-style 0.15s;
-    }
-    .fight-table .f-opp .name:hover { font-style: normal; text-decoration: underline; text-underline-offset: 3px; }
-
-    .fight-table .f-res { width: 32px; font-weight: 400; font-size: 12px; }
-    .f-res.win  { color: var(--ink); }
-    .f-res.loss { color: var(--muted); }
-    .f-res.draw { color: var(--muted); }
-    .f-res.nc   { color: var(--rule); }
-
-    .fight-table .f-method { width: 60px; color: var(--muted); font-size: 10px; }
-
-    .fight-table .f-elo { width: 70px; text-align: right; font-variant-numeric: tabular-nums; }
-
-    .fight-table .f-delta {
-      width: 64px; text-align: right;
-      font-variant-numeric: tabular-nums; font-size: 11px;
-    }
-    .f-delta.pos { color: var(--ink); }
-    .f-delta.neg { color: var(--muted); }
-
-    .fight-table .f-exp { width: 56px; text-align: right; color: var(--muted); font-size: 10px; }
-
-    .modal-loading {
-      padding: 48px 0; font-size: 10px; letter-spacing: 0.2em;
-      text-transform: uppercase; color: var(--muted);
+    .footer-cta {
+      font-family: var(--display); font-size: 72px;
+      color: var(--rule); line-height: 1; letter-spacing: 0.06em; user-select: none;
     }
 
     /* ── Animations ── */
@@ -277,102 +472,173 @@
     }
 
     /* ── Responsive ── */
-    @media (max-width: 800px) {
-      header, .rule, .rule-light, .controls, .table-wrap, .more-wrap, footer,
-      .modal { padding-left: 24px; padding-right: 24px; }
-      .rule, .rule-light { margin-left: 24px; margin-right: 24px; }
-      header { padding-top: 48px; }
-      .header-stats { right: 24px; gap: 24px; }
-      .stat-n { font-size: 30px; }
-      td.fights-cell, td.streak-cell,
-      th.col-fights-h, th.col-streak-h { display: none; }
-      .fight-table .f-exp, .fight-table .f-method { display: none; }
+    @media (max-width: 900px) {
+      .elo-grid { grid-template-columns: 1fr; }
+      .elo-card { border-right: none; border-bottom: 1px solid rgba(242,239,230,0.15); padding: 32px 0; }
+      .elo-card:not(:first-child) { padding-left: 0; }
+      .mult-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 700px) {
+      .topnav, .section, .elo-section, footer { padding-left: 24px; padding-right: 24px; }
+      .red-rule, .thin-rule { margin-left: 24px; margin-right: 24px; }
+      .hero-content { padding-left: 24px; padding-right: 24px; }
+      .top5-row { grid-template-columns: 52px 1fr 90px; }
+      .t5-fights-wrap { display: none; }
+      .mult-grid { grid-template-columns: repeat(2, 1fr); }
+      .topnav-links { display: none; }
     }
   </style>
 </head>
 <body>
 
-<header>
-  <div class="eyebrow">UFC · Elo Rating System · All Divisions</div>
-  <h1 class="title">Fighter<br><em>Rankings</em></h1>
-  <div class="header-stats">
-    <div class="stat-block">
-      <div class="stat-n" id="stat-fighters">—</div>
-      <div class="stat-l">Fighters Rated</div>
+<div class="reg-marks"></div>
+
+<nav class="topnav">
+  <a class="topnav-logo" href="#">UFC ELO</a>
+  <ul class="topnav-links">
+    <li><a href="rankings.html">Rankings</a></li>
+    <li><a href="#how-it-works">How It Works</a></li>
+  </ul>
+</nav>
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <img class="hero-img"
+       src="https://d8j0ntlcm91z4.cloudfront.net/user_3CK39TtM3wzwJSjJ6YUWMbUxIFY/hf_20260516_151820_a5afabbc-7bce-4aac-b517-5aaf8d01b345.png"
+       alt="Empty UFC octagon arena, dramatic fight night lighting">
+  <div class="hero-overlay"></div>
+  <div class="hero-top-rule"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">UFC · Historical Ratings · All Divisions</div>
+    <h1 class="hero-title">The Underground<br>Rankings</h1>
+    <p class="hero-subtitle">Every UFC fight rated since 1993. No politics. Just math.</p>
+  </div>
+</section>
+
+<div class="red-rule"></div>
+
+<!-- ── Top 5 ── -->
+<section class="section">
+  <div class="section-label">Peak Elo Leaders</div>
+  <h2 class="section-heading">The Greatest<br>Of All Time</h2>
+  <div class="top5-grid" id="top5-grid">
+    <div class="top5-error">Loading rankings…</div>
+  </div>
+  <div class="see-all-wrap">
+    <a class="see-all-btn" href="rankings.html">
+      Full Rankings <span class="arrow">→</span>
+    </a>
+  </div>
+</section>
+
+<div class="thin-rule"></div>
+
+<!-- ── Upcoming Events ── -->
+<section class="section" id="upcoming-section" style="display:none">
+  <div class="section-label">On Deck</div>
+  <h2 class="section-heading">Upcoming<br>Events</h2>
+  <div class="events-grid" id="upcoming-grid"></div>
+</section>
+
+<div class="thin-rule" id="upcoming-rule" style="display:none"></div>
+
+<!-- ── Recent Events ── -->
+<section class="section" id="recent-section" style="display:none">
+  <div class="section-label">Fight History</div>
+  <h2 class="section-heading">Recent<br>Events</h2>
+  <div class="events-list" id="recent-list"></div>
+</section>
+
+<div class="thin-rule" id="recent-rule" style="display:none"></div>
+
+<!-- ── How Elo Works ── -->
+<section class="elo-section" id="how-it-works">
+  <div class="section-label">The System</div>
+  <h2 class="section-heading">How Elo Works</h2>
+
+  <div class="elo-grid">
+    <div class="elo-card">
+      <div class="elo-card-icon">800</div>
+      <div class="elo-card-title">Starting Rating</div>
+      <div class="elo-card-text">
+        Every fighter enters with <strong>800 Elo</strong>. Beat a stronger fighter, gain more points. Lose to a weaker one, lose more. The system self-calibrates — a fighter's rating reflects the true quality of their opposition, not just their win-loss record.
+      </div>
     </div>
-    <div class="stat-block">
-      <div class="stat-n" id="stat-fights">—</div>
-      <div class="stat-l">Fights Processed</div>
+    <div class="elo-card">
+      <div class="elo-card-icon">D=600</div>
+      <div class="elo-card-title">Scale Parameter</div>
+      <div class="elo-card-text">
+        MMA has far more upsets than chess. Standard Elo uses D=400; we use <strong>D=600</strong>, meaning a 400-point gap translates to ~82% win probability — not 91%. This flatter curve keeps ratings meaningful even after shocking upsets.
+      </div>
+    </div>
+    <div class="elo-card">
+      <div class="elo-card-icon">K=40</div>
+      <div class="elo-card-title">Adaptive K-Factor</div>
+      <div class="elo-card-text">
+        Newer fighters have high K (large swings), established veterans have lower K (stable ratings). <strong>K decays by half every 10 fights</strong>, settling at a floor of K=22. Win streaks amplify gains up to +15% for elite streaks.
+      </div>
     </div>
   </div>
-</header>
 
-<div class="rule"></div>
-
-<div class="controls">
-  <div class="search-wrap">
-    <input class="search-input" id="search" type="text"
-           placeholder="Search fighter…" autocomplete="off" spellcheck="false">
-    <span class="search-hint">Search</span>
+  <div class="multipliers">
+    <div class="mult-label">Result Confidence Multipliers — applied to every Elo delta</div>
+    <div class="mult-grid">
+      <div class="mult-cell">
+        <div class="mult-method">KO</div>
+        <div class="mult-val">×1.35</div>
+      </div>
+      <div class="mult-cell">
+        <div class="mult-method">TKO</div>
+        <div class="mult-val">×1.25</div>
+      </div>
+      <div class="mult-cell">
+        <div class="mult-method">SUB</div>
+        <div class="mult-val">×1.15</div>
+      </div>
+      <div class="mult-cell">
+        <div class="mult-method">DEC</div>
+        <div class="mult-val">×1.00</div>
+      </div>
+      <div class="mult-cell">
+        <div class="mult-method">Split</div>
+        <div class="mult-val">×0.75</div>
+      </div>
+      <div class="mult-cell">
+        <div class="mult-method">Majority</div>
+        <div class="mult-val">×0.85</div>
+      </div>
+      <div class="mult-cell">
+        <div class="mult-method">Draw</div>
+        <div class="mult-val">×1.00</div>
+      </div>
+      <div class="mult-cell">
+        <div class="mult-method">DQ</div>
+        <div class="mult-val">×0.50</div>
+      </div>
+      <div class="mult-cell">
+        <div class="mult-method">NC</div>
+        <div class="mult-val">×0.00</div>
+      </div>
+    </div>
   </div>
-  <div class="result-label" id="result-label"></div>
-</div>
+</section>
 
-<div class="rule-light"></div>
-
-<div class="table-wrap" id="table-wrap">
-  <table>
-    <colgroup>
-      <col class="col-rank">
-      <col class="col-name">
-      <col class="col-peak">
-      <col class="col-curr">
-      <col class="col-fights">
-      <col class="col-streak">
-    </colgroup>
-    <thead>
-      <tr>
-        <th>#</th>
-        <th data-sort="fighter">Fighter</th>
-        <th class="r sorted" data-sort="peak_elo">Peak Elo</th>
-        <th class="r" data-sort="current_elo">Current</th>
-        <th class="r col-fights-h" data-sort="fights">Fights</th>
-        <th class="r col-streak-h" data-sort="win_streak">Streak</th>
-      </tr>
-    </thead>
-    <tbody id="tbody"></tbody>
-  </table>
-</div>
-
-<div class="more-wrap" id="more-wrap" style="display:none">
-  <button class="more-btn" id="more-btn">Load More</button>
-</div>
-
+<!-- ── Footer ── -->
 <footer>
-  <div class="footer-note">
-    D = 600 &nbsp;·&nbsp; K = 40 adaptive &nbsp;·&nbsp; Result confidence multipliers applied<br>
-    Source: UFCStats.com &nbsp;·&nbsp; Updates automatically every Sunday<br>
-    Ratings reflect opponent strength at time of fight — no retroactive adjustments
+  <div class="footer-inner">
+    <div class="footer-info">
+      <div class="footer-headline">UFC Elo System</div>
+      <div class="footer-detail">
+        Source data: UFCStats.com &nbsp;·&nbsp; Updated every Sunday automatically<br>
+        8,688+ fights processed &nbsp;·&nbsp; Historical data from UFC 1 (Nov 1993)<br>
+        Ratings reflect opponent quality at time of fight — no retroactive adjustments
+      </div>
+    </div>
+    <div class="footer-cta">ELO</div>
   </div>
-  <div class="footer-brand">Elo</div>
 </footer>
 
-<!-- Fighter detail modal -->
-<div class="modal-overlay" id="modal-overlay">
-  <div class="modal" id="modal-inner"></div>
-</div>
-
 <script>
-  /* ── State ── */
-  const PAGE = 100;
-  let all = [], filtered = [], shown = 0;
-  let sortCol = 'peak_elo', sortAsc = false;
-
-  /* Fights data (lazy-loaded on first modal open) */
-  let fightsLoaded = false, fightsLoading = false;
-  let fightsIndex  = {}; // fighter_id -> [fight rows]
-  let fightsError  = false;
-
   /* ── CSV parser ── */
   function parseCSV(raw) {
     const lines = raw.trim().split('\n');
@@ -392,316 +658,141 @@
     }).filter(r => r.fighter && r.fighter !== 'fighter');
   }
 
-  /* ── Leaderboard helpers ── */
   function fmt(v) {
     const n = parseFloat(v);
     return isNaN(n) ? '—' : Math.round(n).toLocaleString();
   }
 
-  function streak(n) {
-    const num = parseInt(n) || 0;
-    if (num === 0) return '<span style="color:var(--rule)">—</span>';
-    const filled = Math.min(num, 8);
-    const empty  = Math.max(0, 8 - filled);
-    return `<span class="streak-num">${num}</span><span class="streak-pip" style="color:var(--ink)">${'●'.repeat(filled)}</span><span class="streak-pip" style="color:var(--rule)">${'●'.repeat(empty)}</span>`;
-  }
-
-  function rankClass(rank) {
-    if (rank === 1) return 'gold';
-    if (rank === 2) return 'silver';
-    if (rank === 3) return 'bronze';
-    return '';
-  }
-
-  function rows(data) {
-    return data.map(f => {
-      const rank  = f._rank;
-      const delta = Math.round((parseFloat(f.current_elo) || 0) - (parseFloat(f.peak_elo) || 0));
-      const dStr  = delta === 0 ? ''
-        : `<span style="font-size:9px;color:var(--muted);margin-left:4px">${delta > 0 ? '+' : ''}${delta}</span>`;
-
-      return `<tr data-id="${f.fighter_id}">
-        <td class="rank-cell ${rankClass(rank)}">${String(rank).padStart(2, '0')}</td>
-        <td><span class="name">${f.fighter}</span></td>
-        <td class="r peak">${fmt(f.peak_elo)}</td>
-        <td class="r dim">${fmt(f.current_elo)}${dStr}</td>
-        <td class="r dim fights-cell">${f.fights || '—'}</td>
-        <td class="r streak-cell">${streak(f.win_streak)}</td>
-      </tr>`;
-    }).join('');
-  }
-
-  function render() {
-    document.getElementById('tbody').innerHTML = rows(filtered.slice(0, shown));
-    document.getElementById('result-label').textContent =
-      filtered.length < all.length
-        ? `${filtered.length.toLocaleString()} of ${all.length.toLocaleString()} fighters`
-        : '';
-    const moreWrap = document.getElementById('more-wrap');
-    const moreBtn  = document.getElementById('more-btn');
-    if (shown < filtered.length) {
-      moreWrap.style.display = 'block';
-      const rem = filtered.length - shown;
-      moreBtn.textContent = `Show ${Math.min(rem, PAGE)} More  ·  ${rem.toLocaleString()} remaining`;
-    } else {
-      moreWrap.style.display = 'none';
-    }
-  }
-
-  function filter(q) {
-    const s = q.toLowerCase().trim();
-    filtered = s
-      ? all.filter(f => f.fighter.toLowerCase().includes(s) || (f.fighter_id || '').includes(s.replace(/ /g, '_')))
-      : [...all];
-    shown = PAGE;
-    render();
-  }
-
-  function sort(col) {
-    if (sortCol === col) sortAsc = !sortAsc;
-    else { sortCol = col; sortAsc = col === 'fighter'; }
-
-    document.querySelectorAll('th[data-sort]').forEach(th => {
-      th.classList.remove('sorted', 'asc');
-      if (th.dataset.sort === sortCol) {
-        th.classList.add('sorted');
-        if (sortAsc) th.classList.add('asc');
-      }
-    });
-
-    if (col === 'fighter') {
-      all.sort((a, b) => sortAsc ? a.fighter.localeCompare(b.fighter) : b.fighter.localeCompare(a.fighter));
-    } else {
-      all.sort((a, b) => {
-        const av = parseFloat(a[col]) || 0, bv = parseFloat(b[col]) || 0;
-        return sortAsc ? av - bv : bv - av;
-      });
-    }
-    all.forEach((f, i) => f._rank = i + 1);
-    filter(document.getElementById('search').value);
-  }
-
-  /* ── Fights log loading ── */
-  async function ensureFights() {
-    if (fightsLoaded || fightsLoading) return;
-    fightsLoading = true;
-    try {
-      const resp = await fetch('fights_log.csv');
-      if (!resp.ok) throw new Error(resp.status);
-      const text = await resp.text();
-      const fightRows = text.trim().split('\n').slice(1); // skip header
-      const headers = text.trim().split('\n')[0].split(',').map(h => h.trim());
-
-      fightsIndex = {};
-      for (const line of fightRows) {
-        const vals = [];
-        let cur = '', q = false;
-        for (const ch of line) {
-          if (ch === '"') { q = !q; continue; }
-          if (ch === ',' && !q) { vals.push(cur); cur = ''; continue; }
-          cur += ch;
-        }
-        vals.push(cur);
-        const fight = {};
-        headers.forEach((h, i) => fight[h] = (vals[i] ?? '').trim());
-
-        [fight.fighter_a_id, fight.fighter_b_id].forEach(fid => {
-          if (!fightsIndex[fid]) fightsIndex[fid] = [];
-          fightsIndex[fid].push(fight);
-        });
-      }
-      fightsLoaded = true;
-    } catch {
-      fightsError = true;
-    }
-    fightsLoading = false;
-  }
-
-  /* ── Modal ── */
-  function openModal() {
-    document.getElementById('modal-overlay').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeModal() {
-    document.getElementById('modal-overlay').classList.remove('open');
-    document.body.style.overflow = '';
-  }
-
-  function fightOutcome(fight, fighterId) {
-    const winner = fight.winner_id;
-    if (!winner) return fight.result === 'NC' ? { label: 'NC', cls: 'nc' } : { label: 'D', cls: 'draw' };
-    if (winner === fighterId) return { label: 'W', cls: 'win' };
-    return { label: 'L', cls: 'loss' };
-  }
-
-  function renderFightRow(fight, fighterId) {
-    const isA      = fight.fighter_a_id === fighterId;
-    const oppName  = isA ? fight.fighter_a === fight.fighter_b ? '—' : fight.fighter_b  : fight.fighter_a;
-    const oppId    = isA ? fight.fighter_b_id : fight.fighter_a_id;
-    const eloBefore = parseFloat(isA ? fight.elo_a_before : fight.elo_b_before) || 0;
-    const delta     = parseFloat(isA ? fight.delta_a     : fight.delta_b)     || 0;
-    const expWin    = isA ? parseFloat(fight.exp_a) : (1 - parseFloat(fight.exp_a));
-    const { label, cls } = fightOutcome(fight, fighterId);
-    const dSign    = delta >= 0 ? '+' : '';
-    const dCls     = delta >= 0 ? 'pos' : 'neg';
-
-    return `<tr>
-      <td class="f-date">${fight.date}</td>
-      <td class="f-opp"><span class="name" data-opp-id="${oppId}">${oppName}</span></td>
-      <td class="f-res ${cls}">${label}</td>
-      <td class="f-method">${fight.result || '—'}</td>
-      <td class="f-elo r">${Math.round(eloBefore).toLocaleString()}</td>
-      <td class="f-delta r ${dCls}">${dSign}${delta.toFixed(1)}</td>
-      <td class="f-exp r">${isNaN(expWin) ? '—' : Math.round(expWin * 100) + '%'}</td>
-    </tr>`;
-  }
-
-  async function showFighter(fighterId) {
-    const fighter = all.find(f => f.fighter_id === fighterId);
-    if (!fighter) return;
-
-    const inner = document.getElementById('modal-inner');
-    inner.innerHTML = `
-      <button class="modal-close" id="modal-close-btn">
-        <svg viewBox="0 0 12 12"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
-        Close
-      </button>
-      <div class="modal-fighter-name">${fighter.fighter}</div>
-      <div class="modal-loading">Loading fight history…</div>`;
-
-    openModal();
-    document.getElementById('modal-close-btn').addEventListener('click', closeModal);
-
-    await ensureFights();
-
-    if (fightsError) {
-      inner.querySelector('.modal-loading').textContent = 'Fight history unavailable — fights_log.csv not found.';
-      return;
-    }
-
-    const fights = (fightsIndex[fighterId] || []).slice().sort((a, b) => b.date.localeCompare(a.date));
-
-    let wins = 0, losses = 0, draws = 0, nc = 0;
-    for (const f of fights) {
-      const { label } = fightOutcome(f, fighterId);
-      if (label === 'W') wins++;
-      else if (label === 'L') losses++;
-      else if (label === 'D') draws++;
-      else nc++;
-    }
-
-    const record = `${wins}W · ${losses}L${draws ? ' · ' + draws + 'D' : ''}${nc ? ' · ' + nc + ' NC' : ''}`;
-    const peakElo = parseFloat(fighter.peak_elo) || 0;
-
-    inner.innerHTML = `
-      <button class="modal-close" id="modal-close-btn">
-        <svg viewBox="0 0 12 12"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
-        Close
-      </button>
-      <div class="modal-fighter-name">${fighter.fighter}</div>
-      <div class="modal-stats">
-        <div class="modal-stat-block">
-          <div class="modal-stat-n">${Math.round(peakElo).toLocaleString()}</div>
-          <div class="modal-stat-l">Peak Elo</div>
-        </div>
-        <div class="modal-stat-block">
-          <div class="modal-stat-n">${Math.round(parseFloat(fighter.current_elo) || 0).toLocaleString()}</div>
-          <div class="modal-stat-l">Current Elo</div>
-        </div>
-        <div class="modal-stat-block">
-          <div class="modal-stat-n" style="font-size:28px;padding-top:4px">${record}</div>
-          <div class="modal-stat-l">UFC Record</div>
-        </div>
-        ${fighter.win_streak > 0 ? `<div class="modal-stat-block">
-          <div class="modal-stat-n">${fighter.win_streak}</div>
-          <div class="modal-stat-l">Win Streak</div>
-        </div>` : ''}
-      </div>
-      <div class="modal-rule"></div>
-      ${fights.length === 0
-        ? '<p style="font-size:11px;color:var(--muted);letter-spacing:0.08em">No fight data available.</p>'
-        : `<table class="fight-table">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Opponent</th>
-                <th>W/L</th>
-                <th>Method</th>
-                <th class="r">Elo</th>
-                <th class="r">Δ</th>
-                <th class="r">Expected</th>
-              </tr>
-            </thead>
-            <tbody>${fights.map(f => renderFightRow(f, fighterId)).join('')}</tbody>
-          </table>`}`;
-
-    document.getElementById('modal-close-btn').addEventListener('click', closeModal);
-
-    // Opponent name clicks — navigate to that fighter's modal
-    inner.querySelectorAll('[data-opp-id]').forEach(el => {
-      el.addEventListener('click', e => {
-        e.stopPropagation();
-        showFighter(el.dataset.oppId);
-      });
-    });
-  }
-
-  /* ── Event wiring ── */
-  document.getElementById('search').addEventListener('input', e => filter(e.target.value));
-  document.getElementById('more-btn').addEventListener('click', () => {
-    shown = Math.min(shown + PAGE, filtered.length);
-    render();
-  });
-  document.querySelectorAll('th[data-sort]').forEach(th =>
-    th.addEventListener('click', () => sort(th.dataset.sort))
-  );
-
-  // Row click → open fighter modal (event delegation)
-  document.getElementById('tbody').addEventListener('click', e => {
-    const row = e.target.closest('tr[data-id]');
-    if (row) showFighter(row.dataset.id);
-  });
-
-  // Close modal on overlay click (outside modal inner)
-  document.getElementById('modal-overlay').addEventListener('click', e => {
-    if (e.target === document.getElementById('modal-overlay')) closeModal();
-  });
-
-  // Close modal on Escape
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeModal();
-  });
-
-  // Prefetch fights data after leaderboard loads so first click is instant
-  function prefetchFights() {
-    setTimeout(ensureFights, 2000);
-  }
-
-  /* ── Init ── */
-  async function init() {
+  async function loadTop5() {
+    const grid = document.getElementById('top5-grid');
     try {
       const resp = await fetch('leaderboard.csv');
       if (!resp.ok) throw new Error(resp.status);
       const text = await resp.text();
-      all = parseCSV(text);
-      const totalFights = all.reduce((s, f) => s + (parseInt(f.fights) || 0), 0);
-      document.getElementById('stat-fighters').textContent = all.length.toLocaleString();
-      document.getElementById('stat-fights').textContent   = totalFights.toLocaleString();
-      sort('peak_elo');
-      prefetchFights();
+      let fighters = parseCSV(text);
+
+      fighters.sort((a, b) => (parseFloat(b.peak_elo) || 0) - (parseFloat(a.peak_elo) || 0));
+      fighters = fighters.slice(0, 5);
+
+      grid.innerHTML = fighters.map((f, i) => {
+        const rank = i + 1;
+        const isFirst = rank === 1;
+        return `<a class="top5-row" href="rankings.html">
+          <div class="t5-rank ${isFirst ? 'first' : ''}">${String(rank).padStart(2, '0')}</div>
+          <div class="t5-name">${f.fighter}</div>
+          <div class="t5-elo-wrap">
+            <div class="t5-elo">${fmt(f.peak_elo)}</div>
+            <div class="t5-elo-label">Peak Elo</div>
+          </div>
+          <div class="t5-fights-wrap">
+            <div class="t5-fights">${f.fights || '—'}</div>
+            <div class="t5-fights-label">Fights</div>
+          </div>
+        </a>`;
+      }).join('');
     } catch {
-      document.getElementById('table-wrap').innerHTML = `
-        <div class="error-state">
-          Could not load <code>leaderboard.csv</code><br><br>
-          Serve this directory with a local web server:<br>
-          <code>python -m http.server 8000</code><br><br>
-          Then open <code>http://localhost:8000</code>
-        </div>`;
+      grid.innerHTML = `<div class="top5-error" style="color:var(--muted)">
+        Rankings unavailable — serve via <code style="font-family:var(--mono);background:var(--faint);padding:1px 6px">python -m http.server 8000</code>
+      </div>`;
     }
   }
 
-  init();
+  loadTop5();
+
+  /* ── Events ── */
+  function fmtDate(iso) {
+    if (!iso) return '';
+    return new Date(iso + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  function evUrl(name, upcoming) {
+    return `event.html?name=${encodeURIComponent(name)}${upcoming ? '&upcoming=1' : ''}`;
+  }
+
+  async function loadEvents() {
+    let data;
+    try {
+      const resp = await fetch('events.json');
+      if (!resp.ok) throw new Error(resp.status);
+      data = await resp.json();
+    } catch { return; }
+
+    /* Upcoming */
+    const upcomingEvents = data.upcoming || [];
+    if (upcomingEvents.length) {
+      document.getElementById('upcoming-section').style.display = '';
+      document.getElementById('upcoming-rule').style.display = '';
+
+      const grid = document.getElementById('upcoming-grid');
+      grid.innerHTML = upcomingEvents.map(ev => {
+        const bouts = ev.card || [];
+        const main  = bouts[0];
+        const rest  = bouts.slice(1, 4);
+        const more  = bouts.length > 4 ? bouts.length - 4 : 0;
+
+        const mainHTML = main
+          ? `<div class="ec-main-event">
+               ${main.fighter_a.split(' ').pop().toUpperCase()}
+               <span class="ec-vs">vs</span>
+               ${main.fighter_b.split(' ').pop().toUpperCase()}
+             </div>`
+          : `<div class="ec-main-event">${ev.name.split(':').pop().trim().toUpperCase()}</div>`;
+
+        const boutsHTML = rest.length
+          ? `<div class="ec-bouts">
+               ${rest.map(b => `<div class="ec-bout">${b.fighter_a} vs ${b.fighter_b}</div>`).join('')}
+               ${more ? `<div class="ec-more">+${more} more bouts</div>` : ''}
+             </div>` : '';
+
+        const imgHTML = ev.image
+          ? `<img class="ec-img" src="${ev.image}" alt="${ev.name}" loading="lazy">`
+          : `<div class="ec-bg-fallback"></div>`;
+
+        const loc = (ev.location || '').split(',').slice(0, 2).join(',').trim();
+
+        return `<a class="event-card" href="${evUrl(ev.name, true)}">
+          ${imgHTML}
+          <div class="ec-grain"></div>
+          <div class="ec-vignette"></div>
+          <div class="ec-topbar"></div>
+          <div class="ec-content">
+            <div class="ec-badge">Upcoming</div>
+            <div class="ec-event-name">${ev.name.split(':')[0]}</div>
+            ${mainHTML}
+            <div class="ec-meta">
+              <div class="ec-date">${fmtDate(ev.date)}</div>
+              ${loc ? `<div class="ec-location">${loc}</div>` : ''}
+            </div>
+          </div>
+          ${boutsHTML}
+        </a>`;
+      }).join('');
+    }
+
+    /* Recent */
+    const recentEvents = data.recent || [];
+    if (recentEvents.length) {
+      document.getElementById('recent-section').style.display = '';
+      document.getElementById('recent-rule').style.display = '';
+
+      const list = document.getElementById('recent-list');
+      list.innerHTML = recentEvents.map(ev => `
+        <a class="recent-row" href="${evUrl(ev.name, false)}">
+          <div class="rr-date">${fmtDate(ev.date)}</div>
+          <div>
+            <div class="rr-name">${ev.name}</div>
+            <div class="rr-main">${ev.main_event || ''}</div>
+          </div>
+          <div>
+            <div class="rr-fights">${ev.fight_count || '—'}</div>
+            <div class="rr-fights-lbl">Fights</div>
+          </div>
+          <div class="rr-arrow">→</div>
+        </a>`).join('');
+    }
+  }
+
+  loadEvents();
 </script>
 </body>
 </html>

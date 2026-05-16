@@ -11,9 +11,9 @@ from itertools import groupby
 
 from schema import Fighter
 from state import save_state, load_state, STATE_PATH
-from scraper import get_all_events, scrape_events
+from scraper import get_all_events, scrape_events, get_upcoming_events, scrape_event_details
 from elo_engine import process_event
-from outputs import save_all_outputs
+from outputs import save_all_outputs, save_events_json
 
 
 def ensure_fighters(fight, fighters: dict):
@@ -75,6 +75,23 @@ def main():
     last_date = max(f.date for f in fights)
     save_state(fighters, last_date)
     save_all_outputs(fighters, all_logs, append_fights=os.path.exists("fights_log.csv"))
+
+    print("\nFetching upcoming events for events.json...")
+    upcoming_raw = []
+    try:
+        upcoming_events = get_upcoming_events()
+        for ev in upcoming_events[:10]:
+            try:
+                details = scrape_event_details(ev)
+                upcoming_raw.append({**ev, **details})
+                import time; time.sleep(1.5)
+            except Exception as e:
+                print(f"  Skipping {ev['name']}: {e}")
+                upcoming_raw.append(ev)
+    except Exception as e:
+        print(f"  Could not fetch upcoming events: {e}")
+
+    save_events_json(fighters, all_logs, upcoming_raw)
 
     # Clean up checkpoint file if it exists
     if os.path.exists("state_checkpoint.json"):

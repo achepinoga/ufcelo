@@ -1,0 +1,306 @@
+{
+  "updated": "2026-05-16",
+  "recent": [
+    {
+      "name": "UFC 328: Chimaev vs. Strickland",
+      "date": "2026-05-09",
+      "fight_count": 13,
+      "main_event": "Sean Strickland vs Khamzat Chimaev"
+    },
+    {
+      "name": "UFC Fight Night: Della Maddalena vs. Prates",
+      "date": "2026-05-02",
+      "fight_count": 13,
+      "main_event": "Carlos Prates vs Jack Della Maddalena"
+    },
+    {
+      "name": "UFC Fight Night: Sterling vs. Zalal",
+      "date": "2026-04-25",
+      "fight_count": 13,
+      "main_event": "Aljamain Sterling vs Youssef Zalal"
+    },
+    {
+      "name": "UFC Fight Night: Burns vs. Malott",
+      "date": "2026-04-18",
+      "fight_count": 12,
+      "main_event": "Mike Malott vs Gilbert Burns"
+    },
+    {
+      "name": "UFC 327: Prochazka vs. Ulberg",
+      "date": "2026-04-11",
+      "fight_count": 12,
+      "main_event": "Carlos Ulberg vs Jiri Prochazka"
+    },
+    {
+      "name": "UFC Fight Night: Moicano vs. Duncan",
+      "date": "2026-04-04",
+      "fight_count": 13,
+      "main_event": "Renato Moicano vs Chris Duncan"
+    },
+    {
+      "name": "UFC Fight Night: Adesanya vs. Pyfer",
+      "date": "2026-03-28",
+      "fight_count": 13,
+      "main_event": "Joe Pyfer vs Israel Adesanya"
+    },
+    {
+      "name": "UFC Fight Night: Evloev vs. Murphy",
+      "date": "2026-03-21",
+      "fight_count": 13,
+      "main_event": "Movsar Evloev vs Lerone Murphy"
+    },
+    {
+      "name": "UFC Fight Night: Emmett vs. Vallejos",
+      "date": "2026-03-14",
+      "fight_count": 14,
+      "main_event": "Kevin Vallejos vs Josh Emmett"
+    },
+    {
+      "name": "UFC 326: Holloway vs. Oliveira 2",
+      "date": "2026-03-07",
+      "fight_count": 12,
+      "main_event": "Charles Oliveira vs Max Holloway"
+    },
+    {
+      "name": "UFC Fight Night: Moreno vs. Kavanagh",
+      "date": "2026-02-28",
+      "fight_count": 13,
+      "main_event": "Loneer Kavanagh vs Brandon Moreno"
+    },
+    {
+      "name": "UFC Fight Night: Strickland vs. Hernandez",
+      "date": "2026-02-21",
+      "fight_count": 13,
+      "main_event": "Sean Strickland vs Anthony Hernandez"
+    },
+    {
+      "name": "UFC Fight Night: Bautista vs. Oliveira",
+      "date": "2026-02-07",
+      "fight_count": 13,
+      "main_event": "Mario Bautista vs Vinicius Oliveira"
+    },
+    {
+      "name": "UFC 325: Volkanovski vs. Lopes 2",
+      "date": "2026-01-31",
+      "fight_count": 13,
+      "main_event": "Alexander Volkanovski vs Diego Lopes"
+    },
+    {
+      "name": "UFC 324: Gaethje vs. Pimblett",
+      "date": "2026-01-24",
+      "fight_count": 11,
+      "main_event": "Justin Gaethje vs Paddy Pimblett"
+    }
+  ],
+  "upcoming": [
+    {
+      "name": "UFC Fight Night: Allen vs. Costa",
+      "date": "2026-05-16",
+      "location": "Las Vegas, Nevada, USA",
+      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3CK39TtM3wzwJSjJ6YUWMbUxIFY/hf_20260516_153509_cd984dc7-56e5-4cce-b307-f38e9be65044.png",
+      "card": [
+        {
+          "fighter_a": "Arnold Allen",
+          "fighter_b": "Melquizael Costa"
+        },
+        {
+          "fighter_a": "Dooho Choi",
+          "fighter_b": "Daniel Santos"
+        },
+        {
+          "fighter_a": "Malcolm Wellmaker",
+          "fighter_b": "Juan Diaz"
+        },
+        {
+          "fighter_a": "Modestas Bukauskas",
+          "fighter_b": "Christian Edwards"
+        },
+        {
+          "fighter_a": "Timmy Cuamba",
+          "fighter_b": "Benardo Sopaj"
+        },
+        {
+          "fighter_a": "Nikolay Veretennikov",
+          "fighter_b": "Khaos Williams"
+        }
+      ]
+    },
+    {
+      "name": "UFC Fight Night: Song vs. Figueiredo",
+      "date": "2026-05-30",
+      "location": "Macau, China",
+      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3CK39TtM3wzwJSjJ6YUWMbUxIFY/hf_20260516_153704_5dff7b85-c555-4e5d-a0f4-ada82184a395.png",
+      "card": [
+        {
+          "fighter_a": "Song Yadong",
+          "fighter_b": "Deiveson Figueiredo"
+        },
+        {
+          "fighter_a": "Zhang Mingyang",
+          "fighter_b": "Alonzo Menifield"
+        },
+        {
+          "fighter_a": "Sergei Pavlovich",
+          "fighter_b": "Tallison Teixeira"
+        },
+        {
+          "fighter_a": "Kai Asakura",
+          "fighter_b": "Cameron Smotherman"
+        },
+        {
+          "fighter_a": "Muslim Salikhov",
+          "fighter_b": "Jake Matthews"
+        },
+        {
+          "fighter_a": "Alex Perez",
+          "fighter_b": "Sumudaerji"
+        }
+      ]
+    },
+    {
+      "name": "UFC Fight Night: Muhammad vs. Bonfim",
+      "date": "2026-06-06",
+      "location": "Las Vegas, Nevada, USA",
+      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3CK39TtM3wzwJSjJ6YUWMbUxIFY/hf_20260516_153854_eb010772-5bbc-416f-8237-22a62804756a.png",
+      "card": [
+        {
+          "fighter_a": "Belal Muhammad",
+          "fighter_b": "Gabriel Bonfim"
+        },
+        {
+          "fighter_a": "Iwo Baraniewski",
+          "fighter_b": "Billy Elekana"
+        },
+        {
+          "fighter_a": "Imanol Rodriguez",
+          "fighter_b": "Matt Schnell"
+        },
+        {
+          "fighter_a": "Bruno Silva",
+          "fighter_b": "Edgar Chairez"
+        },
+        {
+          "fighter_a": "Jeisla Chaves",
+          "fighter_b": "Yuneisy Duben"
+        },
+        {
+          "fighter_a": "Brendan Allen",
+          "fighter_b": "Edmen Shahbazyan"
+        }
+      ]
+    },
+    {
+      "name": "UFC Freedom 250",
+      "date": "2026-06-14",
+      "location": "Washington, DC, USA",
+      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3CK39TtM3wzwJSjJ6YUWMbUxIFY/hf_20260516_154050_adf2692c-5311-4118-be4a-f3233de05f81.png",
+      "card": [
+        {
+          "fighter_a": "Ilia Topuria",
+          "fighter_b": "Justin Gaethje"
+        },
+        {
+          "fighter_a": "Alex Pereira",
+          "fighter_b": "Ciryl Gane"
+        },
+        {
+          "fighter_a": "Sean O'Malley",
+          "fighter_b": "Aiemann Zahabi"
+        },
+        {
+          "fighter_a": "Josh Hokit",
+          "fighter_b": "Derrick Lewis"
+        },
+        {
+          "fighter_a": "Mauricio Ruffy",
+          "fighter_b": "Michael Chandler"
+        },
+        {
+          "fighter_a": "Bo Nickal",
+          "fighter_b": "Kyle Daukaus"
+        }
+      ]
+    },
+    {
+      "name": "UFC Fight Night: Kape vs. Horiguchi",
+      "date": "2026-06-20",
+      "location": "Las Vegas, Nevada, USA",
+      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3CK39TtM3wzwJSjJ6YUWMbUxIFY/hf_20260516_154242_1b8a2c95-f434-4fd0-a38c-d15fed50658c.png",
+      "card": [
+        {
+          "fighter_a": "Manel Kape",
+          "fighter_b": "Kyoji Horiguchi"
+        },
+        {
+          "fighter_a": "Allan Nascimento",
+          "fighter_b": "Mitch Raposo"
+        },
+        {
+          "fighter_a": "Ion Cutelaba",
+          "fighter_b": "Navajo Stirling"
+        },
+        {
+          "fighter_a": "Andre Lima",
+          "fighter_b": "Kevin Borjas"
+        },
+        {
+          "fighter_a": "Hyder Amil",
+          "fighter_b": "Christian Rodriguez"
+        },
+        {
+          "fighter_a": "Bia Mesquita",
+          "fighter_b": "Melissa Mullins"
+        }
+      ]
+    },
+    {
+      "name": "UFC Fight Night: Fiziev vs. Torres",
+      "date": "2026-06-27",
+      "location": "Baku, Azerbaijan",
+      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3CK39TtM3wzwJSjJ6YUWMbUxIFY/hf_20260516_154434_6ba2173c-96cb-4205-98b3-437a5d1c6755.png",
+      "card": [
+        {
+          "fighter_a": "Rafael Fiziev",
+          "fighter_b": "Manuel Torres"
+        },
+        {
+          "fighter_a": "Shara Magomedov",
+          "fighter_b": "Michel Pereira"
+        },
+        {
+          "fighter_a": "Ismail Naurdiev",
+          "fighter_b": "Marvin Vettori"
+        },
+        {
+          "fighter_a": "Ikram Aliskerov",
+          "fighter_b": "Brunno Ferreira"
+        },
+        {
+          "fighter_a": "Nursulton Ruziboev",
+          "fighter_b": "Andrey Pulyaev"
+        },
+        {
+          "fighter_a": "Nazim Sadykhov",
+          "fighter_b": "Matheus Camilo"
+        }
+      ]
+    },
+    {
+      "name": "UFC 329",
+      "date": "2026-07-11",
+      "location": "Las Vegas, Nevada, USA",
+      "card": []
+    },
+    {
+      "name": "UFC Fight Night",
+      "date": "2026-07-18",
+      "location": "Oklahoma City, Oklahoma, USA",
+      "card": [
+        {
+          "fighter_a": "Brad Tavares",
+          "fighter_b": "Marc-Andre Barriault"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UFC Elo — Event</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,700;1,400;1,700&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:     #1A1A1A;
+      --paper:   #F2EFE6;
+      --rule:    #C8BCA8;
+      --muted:   #7A6E60;
+      --faint:   #E8E3D8;
+      --red:     #B91C1C;
+      --display: 'Bebas Neue', 'Arial Black', sans-serif;
+      --serif:   'Playfair Display', Georgia, serif;
+      --mono:    'IBM Plex Mono', 'Courier New', monospace;
+    }
+
+    html { font-size: 16px; }
+    body { background: var(--paper); color: var(--ink); font-family: var(--mono); min-height: 100vh; }
+
+    /* ── Hero image ── */
+    .event-hero {
+      width: 100%;
+      position: relative; overflow: hidden;
+      display: none;
+    }
+    .event-hero.visible { display: block; }
+    .event-hero img {
+      width: 100%; height: auto;
+      display: block;
+      filter: brightness(0.75) contrast(1.05);
+    }
+    .event-hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(242,239,230,1) 0%, rgba(242,239,230,0.1) 30%, transparent 55%);
+    }
+    .event-hero-topbar {
+      position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--red);
+    }
+
+    /* ── Nav ── */
+    .topnav {
+      padding: 16px 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--rule);
+    }
+    .topnav-back {
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.25em;
+      text-transform: uppercase; color: var(--muted); text-decoration: none;
+      transition: color 0.15s;
+    }
+    .topnav-back:hover { color: var(--red); }
+    .topnav-logo {
+      font-family: var(--display); font-size: 18px; letter-spacing: 0.15em;
+      color: var(--ink); text-decoration: none;
+    }
+
+    /* ── Header ── */
+    header { padding: 56px 64px 0; }
+    .eyebrow {
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.35em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 12px;
+      opacity: 0; animation: up 0.7s ease 0.1s forwards;
+    }
+    .event-title {
+      font-family: var(--display);
+      font-size: clamp(40px, 6vw, 88px);
+      line-height: 0.9; letter-spacing: 0.04em;
+      opacity: 0; animation: up 0.7s ease 0.2s forwards;
+    }
+    .event-meta {
+      margin-top: 20px; display: flex; gap: 32px; flex-wrap: wrap;
+      opacity: 0; animation: up 0.7s ease 0.3s forwards;
+    }
+    .meta-block {}
+    .meta-val {
+      font-family: var(--mono); font-size: 13px; font-weight: 300; color: var(--ink);
+    }
+    .meta-lbl {
+      font-family: var(--mono); font-size: 8px; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--muted); margin-top: 2px;
+    }
+
+    /* ── Red rule ── */
+    .red-rule {
+      height: 3px; background: var(--red); margin: 32px 64px 0;
+      transform: scaleX(0); transform-origin: left;
+      animation: line 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+    }
+    .thin-rule { height: 1px; background: var(--rule); margin: 0 64px; }
+
+    /* ── Upcoming card ── */
+    .upcoming-card { padding: 40px 64px; }
+    .upcoming-title {
+      font-family: var(--mono); font-size: 8px; letter-spacing: 0.35em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 24px;
+    }
+    .card-rows {}
+    .card-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 0; border-bottom: 1px solid var(--rule);
+    }
+    .card-row:first-child { border-top: 1px solid var(--rule); }
+    .card-fighters {
+      display: flex; align-items: center; gap: 16px;
+    }
+    .card-name {
+      font-family: var(--serif); font-size: 20px; font-weight: 700; font-style: italic;
+    }
+    .card-vs {
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted);
+    }
+    .card-badge {
+      font-family: var(--mono); font-size: 8px; letter-spacing: 0.25em;
+      text-transform: uppercase; color: var(--muted);
+      border: 1px solid var(--rule); padding: 4px 10px;
+    }
+    .card-badge.main { color: var(--red); border-color: var(--red); }
+
+    /* ── Past fight table ── */
+    .fights-section { padding: 40px 64px; }
+    .section-lbl {
+      font-family: var(--mono); font-size: 8px; letter-spacing: 0.35em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 16px;
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+
+    thead th {
+      font-family: var(--mono); font-size: 8px; font-weight: 400;
+      letter-spacing: 0.25em; text-transform: uppercase; color: var(--muted);
+      padding: 12px 0; text-align: left; border-bottom: 1px solid var(--rule);
+      white-space: nowrap;
+    }
+    thead th.r { text-align: right; }
+
+    tbody tr {
+      border-bottom: 1px solid var(--rule);
+      cursor: pointer; transition: background 0.1s;
+    }
+    tbody tr:hover { background: var(--faint); }
+
+    td {
+      padding: 16px 0; font-family: var(--mono);
+      font-size: 12px; font-weight: 300; vertical-align: middle;
+    }
+    td.r { text-align: right; font-variant-numeric: tabular-nums; }
+
+    .f-name {
+      font-family: var(--serif); font-size: 18px; font-weight: 700; font-style: italic;
+      display: block; line-height: 1.2;
+    }
+    .f-name.winner { color: var(--ink); }
+    .f-name.loser  { color: var(--muted); }
+
+    .badge {
+      display: inline-block; font-family: var(--mono); font-size: 9px;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      padding: 2px 8px; margin-top: 3px;
+    }
+    .badge-w { background: var(--red); color: var(--paper); }
+    .badge-l { background: var(--faint); color: var(--muted); }
+    .badge-d { background: var(--faint); color: var(--muted); }
+    .badge-nc { color: var(--muted); }
+
+    .method-col { font-size: 11px; color: var(--muted); padding-right: 16px; }
+    .wc-col     { font-size: 10px; color: var(--muted); }
+
+    .elo-val { font-size: 13px; }
+    .delta-pos { color: var(--red); }
+    .delta-neg { color: var(--muted); }
+
+    /* ── State messages ── */
+    .loading {
+      padding: 80px 64px; font-family: var(--mono); font-size: 11px;
+      letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted);
+    }
+    .error { padding: 80px 64px; font-family: var(--mono); font-size: 12px; line-height: 2.2; color: var(--muted); }
+    .error code { background: var(--faint); padding: 2px 8px; font-size: 12px; }
+
+    /* ── Footer ── */
+    footer {
+      padding: 40px 64px; border-top: 1px solid var(--rule);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-note { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.08em; line-height: 2; }
+    .footer-brand { font-family: var(--display); font-size: 56px; color: var(--rule); letter-spacing: 0.06em; }
+
+    /* ── Animations ── */
+    @keyframes up {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes line {
+      from { transform: scaleX(0); }
+      to   { transform: scaleX(1); }
+    }
+
+    @media (max-width: 700px) {
+      .topnav, header, .red-rule, .thin-rule, .upcoming-card, .fights-section, footer {
+        padding-left: 24px; padding-right: 24px;
+      }
+      .red-rule, .thin-rule { margin-left: 24px; margin-right: 24px; }
+      .wc-col, th.wc-h { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="event-hero" id="event-hero">
+  <img id="hero-img" src="" alt="">
+  <div class="event-hero-overlay"></div>
+  <div class="event-hero-topbar"></div>
+</div>
+
+<nav class="topnav">
+  <a class="topnav-back" href="index.html">← Events</a>
+  <a class="topnav-logo" href="index.html">UFC ELO</a>
+</nav>
+
+<header>
+  <div class="eyebrow" id="eyebrow">UFC Event</div>
+  <h1 class="event-title" id="event-title">—</h1>
+  <div class="event-meta" id="event-meta"></div>
+</header>
+
+<div class="red-rule"></div>
+
+<div id="main-content">
+  <div class="loading">Loading event data…</div>
+</div>
+
+<footer>
+  <div class="footer-note">
+    Elo ratings reflect opponent strength at time of fight<br>
+    Source: UFCStats.com · Updates every Sunday
+  </div>
+  <div class="footer-brand">ELO</div>
+</footer>
+
+<script>
+  /* ── CSV parser ── */
+  function parseCSV(raw) {
+    const lines = raw.trim().split('\n');
+    const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+    return lines.slice(1).map(line => {
+      const vals = [];
+      let cur = '', q = false;
+      for (const ch of line) {
+        if (ch === '"') { q = !q; continue; }
+        if (ch === ',' && !q) { vals.push(cur); cur = ''; continue; }
+        cur += ch;
+      }
+      vals.push(cur);
+      const o = {};
+      headers.forEach((h, i) => o[h] = (vals[i] ?? '').trim());
+      return o;
+    });
+  }
+
+  function fmt(v) {
+    const n = parseFloat(v);
+    return isNaN(n) ? '—' : Math.round(n).toLocaleString();
+  }
+
+  function fmtDelta(v) {
+    const n = parseFloat(v);
+    if (isNaN(n)) return '—';
+    const sign = n >= 0 ? '+' : '';
+    return `${sign}${n.toFixed(1)}`;
+  }
+
+  /* ── Render past event fights ── */
+  function renderPastFights(fights) {
+    if (!fights.length) return '<div class="error">No fight data found for this event.</div>';
+
+    const rows = fights.map((f, i) => {
+      const winnerA = f.winner_id === f.fighter_a_id;
+      const winnerB = f.winner_id === f.fighter_b_id;
+      const isDraw  = !f.winner_id && f.result !== 'NC';
+      const isNC    = f.result === 'NC' || f.result === 'DQ';
+
+      const aClass = winnerA ? 'winner' : 'loser';
+      const bClass = winnerB ? 'winner' : 'loser';
+
+      let aBadge = '', bBadge = '';
+      if (winnerA)      aBadge = '<span class="badge badge-w">W</span>';
+      else if (isDraw)  aBadge = '<span class="badge badge-d">D</span>';
+      else if (isNC)    aBadge = '<span class="badge badge-nc">NC</span>';
+      else              aBadge = '<span class="badge badge-l">L</span>';
+      if (winnerB)      bBadge = '<span class="badge badge-w">W</span>';
+      else if (isDraw)  bBadge = '<span class="badge badge-d">D</span>';
+      else if (isNC)    bBadge = '<span class="badge badge-nc">NC</span>';
+      else              bBadge = '<span class="badge badge-l">L</span>';
+
+      const daNum  = parseFloat(f.delta_a) || 0;
+      const dbNum  = parseFloat(f.delta_b) || 0;
+      const daCls  = daNum >= 0 ? 'delta-pos' : 'delta-neg';
+      const dbCls  = dbNum >= 0 ? 'delta-pos' : 'delta-neg';
+      const mainBadge = i === 0 ? '<span style="font-family:var(--mono);font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:var(--red);margin-left:12px">Main Event</span>' : '';
+
+      return `<tr>
+        <td>
+          <span class="f-name ${aClass}">${f.fighter_a}${mainBadge}</span>
+          ${aBadge}
+        </td>
+        <td>
+          <span class="f-name ${bClass}">${f.fighter_b}</span>
+          ${bBadge}
+        </td>
+        <td class="method-col">${f.result || '—'}</td>
+        <td class="wc-col">${(f.weight_class || '').replace(' Weight', '').replace('weight', '')}</td>
+        <td class="r elo-val">${fmt(f.elo_a_before)}</td>
+        <td class="r ${daCls}">${fmtDelta(f.delta_a)}</td>
+        <td class="r elo-val">${fmt(f.elo_b_before)}</td>
+        <td class="r ${dbCls}">${fmtDelta(f.delta_b)}</td>
+      </tr>`;
+    }).join('');
+
+    return `<div class="fights-section">
+      <div class="section-lbl">Fight Results · Elo Changes</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Fighter A</th>
+            <th>Fighter B</th>
+            <th>Method</th>
+            <th class="wc-h">Division</th>
+            <th class="r">Elo A</th>
+            <th class="r">Δ A</th>
+            <th class="r">Elo B</th>
+            <th class="r">Δ B</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+  }
+
+  /* ── Render upcoming event card ── */
+  function renderUpcomingCard(card) {
+    if (!card || !card.length) {
+      return `<div class="upcoming-card"><div class="upcoming-title">Card not yet announced</div></div>`;
+    }
+
+    const rows = card.map((bout, i) => {
+      const isMain = i === 0;
+      return `<div class="card-row">
+        <div class="card-fighters">
+          <span class="card-name">${bout.fighter_a}</span>
+          <span class="card-vs">vs</span>
+          <span class="card-name">${bout.fighter_b}</span>
+        </div>
+        ${isMain ? '<span class="card-badge main">Main Event</span>' : '<span class="card-badge">Announced</span>'}
+      </div>`;
+    }).join('');
+
+    return `<div class="upcoming-card">
+      <div class="upcoming-title">Announced Card · ${card.length} Bout${card.length !== 1 ? 's' : ''}</div>
+      <div class="card-rows">${rows}</div>
+    </div>`;
+  }
+
+  /* ── Main ── */
+  async function init() {
+    const params = new URLSearchParams(location.search);
+    const eventName = params.get('name') || '';
+    const isUpcoming = params.get('upcoming') === '1';
+
+    if (!eventName) {
+      document.getElementById('main-content').innerHTML =
+        '<div class="error">No event specified. <a href="index.html" style="color:var(--red)">Go back</a></div>';
+      return;
+    }
+
+    document.getElementById('event-title').textContent = eventName;
+    document.title = `UFC Elo — ${eventName}`;
+
+    // Load events.json for meta + upcoming card
+    let eventsData = null;
+    try {
+      const resp = await fetch('events.json');
+      if (resp.ok) eventsData = await resp.json();
+    } catch {}
+
+    const upcomingEv = eventsData?.upcoming?.find(e => e.name === eventName);
+    const recentEv   = eventsData?.recent?.find(e => e.name === eventName);
+    const sourceEv   = upcomingEv || recentEv;
+
+    // Show hero image if available
+    if (sourceEv?.image) {
+      const hero = document.getElementById('event-hero');
+      document.getElementById('hero-img').src = sourceEv.image;
+      hero.classList.add('visible');
+    }
+
+    // Set meta
+    const metaEl = document.getElementById('event-meta');
+    const eyebrowEl = document.getElementById('eyebrow');
+    if (sourceEv) {
+      const dateStr = sourceEv.date
+        ? new Date(sourceEv.date + 'T12:00:00').toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' })
+        : '';
+      const locStr = sourceEv.location || '';
+      let metaHTML = '';
+      if (dateStr) metaHTML += `<div class="meta-block"><div class="meta-val">${dateStr}</div><div class="meta-lbl">Date</div></div>`;
+      if (locStr)  metaHTML += `<div class="meta-block"><div class="meta-val">${locStr}</div><div class="meta-lbl">Location</div></div>`;
+      metaEl.innerHTML = metaHTML;
+
+      if (upcomingEv) {
+        eyebrowEl.textContent = 'Upcoming Event';
+      } else {
+        if (sourceEv.fight_count) {
+          metaHTML += `<div class="meta-block"><div class="meta-val">${sourceEv.fight_count}</div><div class="meta-lbl">Fights</div></div>`;
+          metaEl.innerHTML = metaHTML;
+        }
+        eyebrowEl.textContent = 'Past Event';
+      }
+    }
+
+    // If upcoming: show card from events.json
+    if (upcomingEv) {
+      document.getElementById('main-content').innerHTML = renderUpcomingCard(upcomingEv.card);
+      return;
+    }
+
+    // Past event: load from fights_log.csv
+    try {
+      const resp = await fetch('fights_log.csv');
+      if (!resp.ok) throw new Error(resp.status);
+      const text = await resp.text();
+      const allFights = parseCSV(text);
+      const fights = allFights.filter(f => f.event === eventName);
+
+      if (!fights.length) {
+        document.getElementById('main-content').innerHTML =
+          `<div class="error">No fight data found for "<strong>${eventName}</strong>".<br><br>
+           This event may not yet be in the database.</div>`;
+        return;
+      }
+
+      document.getElementById('main-content').innerHTML = renderPastFights(fights);
+    } catch (e) {
+      document.getElementById('main-content').innerHTML =
+        `<div class="error">
+          Could not load <code>fights_log.csv</code><br><br>
+          Serve via <code>python -m http.server 8000</code>
+        </div>`;
+    }
+  }
+
+  init();
+
+  // Row click → navigate to fighter modal on rankings page
+  document.addEventListener('click', e => {
+    const row = e.target.closest('tbody tr');
+    if (!row) return;
+    const names = row.querySelectorAll('.f-name');
+    // Clicking a fighter name navigates to rankings filtered by that fighter
+    if (e.target.classList.contains('f-name')) {
+      const name = e.target.textContent.trim();
+      window.location.href = `rankings.html?search=${encodeURIComponent(name)}`;
+    }
+  });
+</script>
+</body>
+</html>

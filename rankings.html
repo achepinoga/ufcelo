@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UFC Elo — Fighter Rankings</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,700;1,400;1,700&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:    #1A1A1A;
+      --paper:  #F2EFE6;
+      --rule:   #C8BCA8;
+      --muted:  #7A6E60;
+      --faint:  #E8E3D8;
+      --red:    #B91C1C;
+      --display:'Bebas Neue', 'Arial Black', sans-serif;
+      --serif:  'Playfair Display', Georgia, serif;
+      --mono:   'IBM Plex Mono', 'Courier New', monospace;
+    }
+
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body { background: var(--paper); color: var(--ink); font-family: var(--mono); min-height: 100vh; }
+
+    /* ── Top nav ── */
+    .topnav {
+      padding: 16px 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--rule);
+    }
+    .topnav-back {
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.25em;
+      text-transform: uppercase; color: var(--muted); text-decoration: none;
+      transition: color 0.15s;
+    }
+    .topnav-back:hover { color: var(--red); }
+    .topnav-logo {
+      font-family: var(--display); font-size: 18px; letter-spacing: 0.15em;
+      color: var(--ink); text-decoration: none;
+    }
+
+    /* ── Header ── */
+    header { padding: 56px 64px 0; position: relative; }
+    .eyebrow {
+      font-family: var(--mono); font-size: 9px; font-weight: 400;
+      letter-spacing: 0.35em; text-transform: uppercase; color: var(--red);
+      opacity: 0; animation: up 0.7s ease 0.1s forwards;
+    }
+    .title {
+      font-family: var(--display);
+      font-size: clamp(72px, 11vw, 140px);
+      font-weight: 400; line-height: 0.88; letter-spacing: 0.03em; margin-top: 12px;
+      opacity: 0; animation: up 0.7s ease 0.2s forwards;
+    }
+    .header-stats {
+      position: absolute; right: 64px; bottom: 0; text-align: right;
+      opacity: 0; animation: up 0.7s ease 0.3s forwards;
+      display: flex; gap: 40px;
+    }
+    .stat-block { text-align: right; }
+    .stat-n { font-family: var(--display); font-size: 48px; color: var(--ink); line-height: 1; letter-spacing: 0.04em; }
+    .stat-l { font-family: var(--mono); font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+
+    /* ── Rules ── */
+    .rule { height: 3px; background: var(--red); margin: 32px 64px 0; transform: scaleX(0); transform-origin: left; animation: line 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards; }
+
+    /* ── View toggle (RANKINGS / LEADERBOARD) ── */
+    .view-toggle {
+      padding: 28px 64px 0;
+      display: flex; align-items: center; gap: 0;
+      opacity: 0; animation: up 0.5s ease 0.7s forwards;
+    }
+    .view-btn {
+      font-family: var(--display); font-size: 15px; letter-spacing: 0.12em;
+      padding: 11px 32px;
+      border: 1px solid var(--rule);
+      background: none; cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      color: var(--muted);
+    }
+    .view-btn:first-child { border-right: none; }
+    .view-btn.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+    /* ── Weight class tabs ── */
+    .wc-tabs-wrap {
+      padding: 0 64px; overflow-x: auto; scrollbar-width: none;
+      opacity: 0; animation: up 0.5s ease 0.85s forwards;
+    }
+    .wc-tabs-wrap::-webkit-scrollbar { display: none; }
+    .wc-tabs {
+      display: flex; gap: 0;
+      border-bottom: 1px solid var(--rule);
+      min-width: max-content;
+    }
+    .wc-tab {
+      padding: 14px 20px;
+      font-family: var(--mono); font-size: 8px; font-weight: 400;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--muted); cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -1px;
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap; user-select: none;
+    }
+    .wc-tab:hover { color: var(--ink); }
+    .wc-tab.active { color: var(--red); border-bottom-color: var(--red); }
+
+    /* ═══════════════════════════════════════
+       RANKINGS VIEW
+    ═══════════════════════════════════════ */
+    #rankings-view { display: block; }
+
+    /* Division eyebrow above featured card */
+    .rankings-header {
+      padding: 40px 64px 0;
+      display: flex; align-items: baseline; justify-content: space-between;
+    }
+    .rankings-division {
+      font-family: var(--display);
+      font-size: clamp(28px, 5vw, 52px);
+      letter-spacing: 0.06em;
+      line-height: 1;
+    }
+    .rankings-mode-label {
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.25em;
+      text-transform: uppercase; color: var(--muted);
+    }
+
+    /* Featured fighter card */
+    .featured-card {
+      margin: 0 64px;
+      border-top: 3px solid var(--ink);
+      border-bottom: 1px solid var(--rule);
+      padding: 28px 0 28px;
+      display: flex; align-items: flex-end; gap: 0;
+      cursor: pointer; transition: background 0.12s;
+    }
+    .featured-card:hover { background: var(--faint); }
+    .featured-rank-num {
+      font-family: var(--display);
+      font-size: clamp(80px, 13vw, 160px);
+      color: var(--rule);
+      line-height: 0.85;
+      letter-spacing: 0.02em;
+      margin-right: 28px;
+      flex-shrink: 0;
+    }
+    .featured-info { flex: 1; min-width: 0; }
+    .featured-name {
+      font-family: var(--display);
+      font-size: clamp(44px, 7.5vw, 100px);
+      line-height: 0.88; letter-spacing: 0.03em;
+      text-transform: uppercase; word-break: break-word;
+    }
+    .featured-sub {
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.28em;
+      text-transform: uppercase; color: var(--red); margin-top: 14px;
+    }
+    .featured-elo-block {
+      text-align: right; flex-shrink: 0; padding-left: 24px;
+    }
+    .featured-elo-n {
+      font-family: var(--display);
+      font-size: clamp(48px, 6vw, 80px);
+      line-height: 1; letter-spacing: 0.04em;
+      font-variant-numeric: tabular-nums;
+    }
+    .featured-elo-l {
+      font-family: var(--mono); font-size: 8px; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--muted); margin-top: 4px;
+    }
+
+    /* Featured image */
+    .featured-img-wrap {
+      width: 130px; height: 190px;
+      flex-shrink: 0; overflow: hidden; align-self: flex-end;
+      margin-left: 20px;
+    }
+    .featured-img-wrap img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: top center;
+      display: block; filter: grayscale(12%);
+    }
+
+    /* Contenders list */
+    .contenders-list { padding: 0 64px; }
+    .contender-row {
+      display: flex; align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--rule);
+      cursor: pointer; transition: background 0.1s;
+      gap: 0;
+    }
+    .contender-row:hover { background: var(--faint); margin-left: -64px; margin-right: -64px; padding-left: 64px; padding-right: 64px; }
+    /* Contender avatar */
+    .contender-avatar {
+      width: 44px; height: 44px;
+      border-radius: 50%; overflow: hidden; flex-shrink: 0;
+      margin-right: 14px; background: var(--faint);
+      border: 1px solid var(--rule);
+    }
+    .contender-avatar img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: top center; display: block;
+    }
+
+    .contender-rank {
+      font-family: var(--display); font-size: 20px; color: var(--red);
+      letter-spacing: 0.04em; width: 52px; flex-shrink: 0;
+    }
+    .contender-name {
+      font-family: var(--serif); font-size: 21px; font-weight: 700;
+      font-style: italic; flex: 1; min-width: 0;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .contender-wc {
+      font-family: var(--mono); font-size: 8px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted);
+      flex-shrink: 0; width: 150px; display: none;
+    }
+    .show-wc .contender-wc { display: block; }
+    .contender-streak {
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.05em;
+      color: var(--red); margin-right: 24px; flex-shrink: 0; min-width: 40px; text-align: right;
+    }
+    .contender-elo {
+      font-family: var(--display); font-size: 28px;
+      letter-spacing: 0.04em; font-variant-numeric: tabular-nums;
+      text-align: right; flex-shrink: 0; min-width: 72px;
+    }
+
+    .rankings-empty {
+      padding: 64px 64px;
+      font-family: var(--mono); font-size: 11px; color: var(--muted);
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+
+    /* ═══════════════════════════════════════
+       LEADERBOARD VIEW
+    ═══════════════════════════════════════ */
+    #leaderboard-view { display: none; }
+
+    /* Mode toggle (Current / All-Time) */
+    .mode-toggle {
+      padding: 20px 64px 0;
+      display: flex; align-items: center; gap: 0;
+    }
+    .mode-btn {
+      font-family: var(--display); font-size: 16px; letter-spacing: 0.1em;
+      padding: 10px 28px;
+      border: 1px solid var(--rule);
+      background: none; cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      color: var(--muted);
+    }
+    .mode-btn:first-child { border-right: none; }
+    .mode-btn.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+    .mode-desc {
+      margin-left: 20px;
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; color: var(--muted);
+    }
+
+    /* Controls */
+    .controls {
+      padding: 20px 64px; display: flex; align-items: center;
+      justify-content: space-between; gap: 24px;
+    }
+    .search-wrap { position: relative; flex: 0 0 300px; }
+    .search-input {
+      width: 100%; background: none; border: none;
+      border-bottom: 1px solid var(--rule);
+      padding: 7px 60px 7px 0;
+      font-family: var(--mono); font-size: 12px; font-weight: 300;
+      color: var(--ink); outline: none; letter-spacing: 0.04em;
+      transition: border-color 0.2s;
+    }
+    .search-input::placeholder { color: var(--muted); }
+    .search-input:focus { border-color: var(--red); }
+    .search-hint {
+      position: absolute; right: 0; top: 7px;
+      font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--muted); pointer-events: none;
+    }
+    .result-label {
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted);
+    }
+
+    /* Table */
+    .table-wrap { padding: 0 64px; }
+    table { width: 100%; border-collapse: collapse; }
+    colgroup .col-rank   { width: 68px; }
+    colgroup .col-peak   { width: 110px; }
+    colgroup .col-curr   { width: 110px; }
+    colgroup .col-fights { width: 80px; }
+    colgroup .col-streak { width: 120px; }
+
+    thead th {
+      font-family: var(--mono); font-size: 8px; font-weight: 400;
+      letter-spacing: 0.28em; text-transform: uppercase; color: var(--muted);
+      padding: 14px 0; text-align: left;
+      border-bottom: 1px solid var(--rule);
+      white-space: nowrap; user-select: none;
+    }
+    thead th.r { text-align: right; }
+    thead th[data-sort] { cursor: pointer; transition: color 0.15s; }
+    thead th[data-sort]:hover { color: var(--red); }
+    thead th.sorted { color: var(--red); }
+    thead th.sorted::after { content: ' ↓'; font-size: 7px; }
+    thead th.sorted.asc::after { content: ' ↑'; }
+
+    tbody tr { border-bottom: 1px solid var(--rule); cursor: pointer; transition: background 0.12s; }
+    tbody tr:hover { background: var(--faint); }
+
+    td { padding: 15px 0; font-family: var(--mono); font-size: 12px; font-weight: 300; vertical-align: middle; }
+    td.rank-cell { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.06em; padding-right: 12px; }
+    td.rank-cell.gold   { color: var(--red); font-weight: 400; }
+    td.rank-cell.silver { color: var(--ink); font-weight: 400; }
+    td.rank-cell.bronze { color: #8A7D6E; }
+
+    .name { font-family: var(--serif); font-size: 19px; font-weight: 700; font-style: italic; letter-spacing: 0.008em; }
+    td.r { text-align: right; font-variant-numeric: tabular-nums; }
+    td.peak { font-weight: 400; }
+    td.dim  { color: var(--muted); }
+
+    .streak-pip { display: inline-block; font-size: 6px; letter-spacing: 1.5px; vertical-align: middle; }
+    .streak-num { display: inline-block; min-width: 20px; margin-right: 6px; }
+
+    /* Load more */
+    .more-wrap { text-align: center; padding: 48px 64px; }
+    .more-btn {
+      background: none; border: 1px solid var(--rule);
+      padding: 13px 36px; font-family: var(--mono);
+      font-size: 9px; font-weight: 400; letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--muted); cursor: pointer; transition: border-color 0.2s, color 0.2s;
+    }
+    .more-btn:hover { border-color: var(--red); color: var(--red); }
+
+    /* ── Footer ── */
+    footer {
+      padding: 40px 64px 64px; display: flex;
+      justify-content: space-between; align-items: flex-end;
+      border-top: 3px solid var(--rule); margin-top: 40px;
+    }
+    .footer-note { font-family: var(--mono); font-size: 9px; line-height: 2; color: var(--muted); letter-spacing: 0.08em; }
+    .footer-brand { font-family: var(--display); font-size: 72px; color: var(--rule); line-height: 1; letter-spacing: 0.06em; user-select: none; }
+
+    /* ── Error state ── */
+    .error-state { padding: 80px 64px; font-size: 11px; font-weight: 300; line-height: 2.2; color: var(--muted); letter-spacing: 0.05em; }
+    .error-state code { font-family: var(--mono); font-size: 12px; color: var(--ink); background: var(--faint); padding: 2px 8px; }
+
+    /* ── Fighter Modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(242, 239, 230, 0.97);
+      overflow-y: auto;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.22s ease;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      max-width: 960px; margin: 0 auto;
+      padding: 56px 64px 80px;
+      transform: translateY(18px);
+      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+    .modal-close {
+      display: flex; align-items: center; gap: 10px;
+      background: none; border: none; cursor: pointer;
+      font-family: var(--mono); font-size: 9px; font-weight: 400;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--muted); padding: 0; margin-bottom: 48px;
+      transition: color 0.15s;
+    }
+    .modal-close:hover { color: var(--red); }
+    .modal-close svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+    .modal-header {
+      display: flex; align-items: flex-end;
+      justify-content: space-between; gap: 32px; margin-bottom: 32px;
+    }
+    .modal-header-left { flex: 1; min-width: 0; }
+    .modal-fighter-name {
+      font-family: var(--display);
+      font-size: clamp(48px, 7vw, 100px);
+      font-weight: 400; line-height: 0.9;
+      letter-spacing: 0.04em; margin-bottom: 24px;
+      text-transform: uppercase;
+    }
+    .modal-fighter-img {
+      flex-shrink: 0; width: 160px; height: 210px;
+      overflow: hidden; align-self: flex-end;
+    }
+    .modal-fighter-img img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: top center; display: block;
+    }
+    .modal-stats { display: flex; gap: 48px; margin-bottom: 0; flex-wrap: wrap; }
+    .modal-stat-n { font-family: var(--display); font-size: 42px; line-height: 1; letter-spacing: 0.04em; }
+    .modal-stat-l { font-family: var(--mono); font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-top: 3px; }
+    .modal-rule { height: 3px; background: var(--red); margin-bottom: 32px; }
+
+    /* Fight history table */
+    .fight-table { width: 100%; border-collapse: collapse; }
+    .fight-table thead th {
+      font-family: var(--mono); font-size: 8px; font-weight: 400;
+      letter-spacing: 0.25em; text-transform: uppercase; color: var(--muted);
+      padding: 0 0 12px; text-align: left; border-bottom: 1px solid var(--rule);
+    }
+    .fight-table thead th.r { text-align: right; }
+    .fight-table tbody tr { border-bottom: 1px solid var(--rule); cursor: default; transition: background 0.1s; }
+    .fight-table tbody tr:hover { background: var(--faint); }
+    .fight-table td { padding: 13px 0; font-family: var(--mono); font-size: 11px; font-weight: 300; vertical-align: middle; }
+    .fight-table .f-date { color: var(--muted); white-space: nowrap; width: 96px; }
+    .fight-table .f-opp .name { font-size: 17px; cursor: pointer; transition: color 0.15s; }
+    .fight-table .f-opp .name:hover { color: var(--red); }
+    .fight-table .f-res { width: 32px; font-weight: 400; font-size: 12px; }
+    .f-res.win  { color: var(--red); font-weight: 400; }
+    .f-res.loss { color: var(--muted); }
+    .f-res.draw { color: var(--muted); }
+    .f-res.nc   { color: var(--rule); }
+    .fight-table .f-method { width: 60px; color: var(--muted); font-size: 10px; }
+    .fight-table .f-elo { width: 70px; text-align: right; font-variant-numeric: tabular-nums; }
+    .fight-table .f-delta { width: 64px; text-align: right; font-variant-numeric: tabular-nums; font-size: 11px; }
+    .f-delta.pos { color: var(--red); }
+    .f-delta.neg { color: var(--muted); }
+    .fight-table .f-exp { width: 56px; text-align: right; color: var(--muted); font-size: 10px; }
+    .modal-loading { padding: 48px 0; font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+
+    /* ── Animations ── */
+    @keyframes up   { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes line { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+    /* ── Responsive ── */
+    @media (max-width: 800px) {
+      .topnav, header, .rule, .controls, .table-wrap, .more-wrap,
+      footer, .modal, .rankings-header, .contenders-list, .rankings-empty { padding-left: 24px; padding-right: 24px; }
+      .rule { margin-left: 24px; margin-right: 24px; }
+      header { padding-top: 40px; }
+      .header-stats { right: 24px; gap: 20px; }
+      .stat-n { font-size: 36px; }
+      .wc-tabs-wrap { padding: 0 24px; }
+      .view-toggle, .mode-toggle { padding-left: 24px; padding-right: 24px; }
+      .featured-card { margin-left: 24px; margin-right: 24px; }
+      .featured-rank-num { font-size: 72px; margin-right: 16px; }
+      .contender-wc { display: none !important; }
+      td.fights-cell, td.streak-cell, th.col-fights-h, th.col-streak-h { display: none; }
+      .fight-table .f-exp, .fight-table .f-method { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="topnav-back" href="index.html">← Overview</a>
+  <a class="topnav-logo" href="index.html">UFC ELO</a>
+</nav>
+
+<header>
+  <div class="eyebrow">All Divisions · UFC · Elo Rating System</div>
+  <h1 class="title">Fighter<br>Rankings</h1>
+  <div class="header-stats">
+    <div class="stat-block">
+      <div class="stat-n" id="stat-fighters">—</div>
+      <div class="stat-l">Fighters Rated</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-n" id="stat-active">—</div>
+      <div class="stat-l">Active Fighters</div>
+    </div>
+  </div>
+</header>
+
+<div class="rule"></div>
+
+<!-- View toggle -->
+<div class="view-toggle">
+  <button class="view-btn active" id="view-rankings-btn">Rankings</button>
+  <button class="view-btn" id="view-leaderboard-btn">Leaderboard</button>
+</div>
+
+<!-- Weight class tabs (shared) -->
+<div class="wc-tabs-wrap" style="margin-top:20px">
+  <div class="wc-tabs" id="wc-tabs">
+    <div class="wc-tab active" data-wc="">P4P</div>
+    <div class="wc-tab" data-wc="Heavyweight">HW</div>
+    <div class="wc-tab" data-wc="Light Heavyweight">LHW</div>
+    <div class="wc-tab" data-wc="Middleweight">MW</div>
+    <div class="wc-tab" data-wc="Welterweight">WW</div>
+    <div class="wc-tab" data-wc="Lightweight">LW</div>
+    <div class="wc-tab" data-wc="Featherweight">FW</div>
+    <div class="wc-tab" data-wc="Bantamweight">BW</div>
+    <div class="wc-tab" data-wc="Flyweight">FLY</div>
+    <div class="wc-tab" data-wc="Women's Strawweight">W·STR</div>
+    <div class="wc-tab" data-wc="Women's Flyweight">W·FLY</div>
+    <div class="wc-tab" data-wc="Women's Bantamweight">W·BW</div>
+  </div>
+</div>
+
+<!-- ══════════════════ RANKINGS VIEW ══════════════════ -->
+<div id="rankings-view">
+  <div class="rankings-header">
+    <div class="rankings-division" id="rankings-division-label">Pound for Pound</div>
+    <div class="rankings-mode-label">Active Fighters · By Current Elo</div>
+  </div>
+  <div id="featured-wrap">
+    <div class="featured-card" id="featured-card" style="display:none"></div>
+  </div>
+  <div class="contenders-list" id="contenders-list"></div>
+</div>
+
+<!-- ══════════════════ LEADERBOARD VIEW ══════════════════ -->
+<div id="leaderboard-view">
+  <div class="mode-toggle">
+    <button class="mode-btn active" id="mode-current">Current</button>
+    <button class="mode-btn" id="mode-alltime">All-Time</button>
+    <span class="mode-desc" id="mode-desc">Active fighters · Sorted by current Elo</span>
+  </div>
+
+  <div class="controls">
+    <div class="search-wrap">
+      <input class="search-input" id="search" type="text"
+             placeholder="Search fighter…" autocomplete="off" spellcheck="false">
+      <span class="search-hint">Search</span>
+    </div>
+    <div class="result-label" id="result-label"></div>
+  </div>
+
+  <div class="table-wrap" id="table-wrap">
+    <table>
+      <colgroup>
+        <col class="col-rank">
+        <col class="col-name">
+        <col class="col-peak">
+        <col class="col-curr">
+        <col class="col-fights">
+        <col class="col-streak">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th data-sort="fighter">Fighter</th>
+          <th class="r sorted" data-sort="peak_elo">Peak Elo</th>
+          <th class="r" data-sort="current_elo">Current</th>
+          <th class="r col-fights-h" data-sort="fights">Fights</th>
+          <th class="r col-streak-h" data-sort="win_streak">Streak</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="more-wrap" id="more-wrap" style="display:none">
+    <button class="more-btn" id="more-btn">Load More</button>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-note">
+    D = 600 &nbsp;·&nbsp; K = 40 adaptive &nbsp;·&nbsp; Result confidence multipliers applied<br>
+    Source: UFCStats.com &nbsp;·&nbsp; Updates automatically every Sunday<br>
+    Ratings reflect opponent strength at time of fight — no retroactive adjustments
+  </div>
+  <div class="footer-brand">ELO</div>
+</footer>
+
+<!-- Fighter detail modal -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal-inner"></div>
+</div>
+
+<script>
+  /* ── State ── */
+  const PAGE = 100;
+  let all = [], shown = 0;
+  let sortCol = '', sortAsc = false;
+  let activeWC = '';
+  let mode = 'current';
+  let viewMode = 'rankings'; // 'rankings' | 'leaderboard'
+
+  // Active = fought within last 18 months
+  const ACTIVE_CUTOFF = new Date();
+  ACTIVE_CUTOFF.setMonth(ACTIVE_CUTOFF.getMonth() - 18);
+  const ACTIVE_CUTOFF_ISO = ACTIVE_CUTOFF.toISOString().slice(0, 10);
+
+  let fightsLoaded = false, fightsLoading = false;
+  let fightsIndex  = {};
+  let fightsError  = false;
+
+  const DIVISION_NAMES = {
+    '': 'Pound for Pound',
+    'Heavyweight': 'Heavyweight',
+    'Light Heavyweight': 'Light Heavyweight',
+    'Middleweight': 'Middleweight',
+    'Welterweight': 'Welterweight',
+    'Lightweight': 'Lightweight',
+    'Featherweight': 'Featherweight',
+    'Bantamweight': 'Bantamweight',
+    'Flyweight': 'Flyweight',
+    "Women's Strawweight": "Women's Strawweight",
+    "Women's Flyweight": "Women's Flyweight",
+    "Women's Bantamweight": "Women's Bantamweight",
+  };
+
+  /* ── CSV parser ── */
+  function parseCSV(raw) {
+    const lines = raw.trim().split('\n');
+    const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+    return lines.slice(1).map(line => {
+      const vals = [];
+      let cur = '', q = false;
+      for (const ch of line) {
+        if (ch === '"') { q = !q; continue; }
+        if (ch === ',' && !q) { vals.push(cur); cur = ''; continue; }
+        cur += ch;
+      }
+      vals.push(cur);
+      const o = {};
+      headers.forEach((h, i) => o[h] = (vals[i] ?? '').trim());
+      return o;
+    }).filter(r => r.fighter && r.fighter !== 'fighter');
+  }
+
+  /* ── Rankings view ── */
+  function getActiveFiltered() {
+    let base = all.filter(f => f.last_fight_date >= ACTIVE_CUTOFF_ISO);
+    if (activeWC) base = base.filter(f => f.weight_class === activeWC);
+    return base.sort((a, b) => (parseFloat(b.current_elo) || 0) - (parseFloat(a.current_elo) || 0));
+  }
+
+  function renderRankings() {
+    const ranked = getActiveFiltered();
+    const divLabel = DIVISION_NAMES[activeWC] || activeWC || 'Pound for Pound';
+    document.getElementById('rankings-division-label').textContent = divLabel;
+
+    const featCard = document.getElementById('featured-card');
+    const contList = document.getElementById('contenders-list');
+    const showWC = !activeWC;
+
+    if (ranked.length === 0) {
+      featCard.style.display = 'none';
+      contList.innerHTML = `<div class="rankings-empty">No active fighters found in this division</div>`;
+      return;
+    }
+
+    // Featured #1
+    const champ = ranked[0];
+    const champElo = Math.round(parseFloat(champ.current_elo) || 0);
+    const champSub = [
+      activeWC || champ.weight_class || '',
+      champ.win_streak > 0 ? `${champ.win_streak}-Fight Win Streak` : '',
+      `${champ.fights} Fights`
+    ].filter(Boolean).join(' · ');
+
+    featCard.style.display = 'flex';
+    featCard.dataset.id = champ.fighter_id;
+    featCard.innerHTML = `
+      <div class="featured-rank-num">01</div>
+      <div class="featured-info">
+        <div class="featured-name">${champ.fighter}</div>
+        <div class="featured-sub">${champSub}</div>
+      </div>
+      <div class="featured-img-wrap">
+        <img src="fighters/${champ.fighter_id}.jpg" alt="${champ.fighter}"
+             onerror="this.parentElement.style.background='var(--faint)';this.style.display='none'">
+      </div>
+      <div class="featured-elo-block">
+        <div class="featured-elo-n">${champElo.toLocaleString()}</div>
+        <div class="featured-elo-l">Current Elo</div>
+      </div>`;
+
+    // Contenders #2+
+    if (showWC) contList.classList.add('show-wc');
+    else contList.classList.remove('show-wc');
+
+    contList.innerHTML = ranked.slice(1, 15).map((f, i) => {
+      const elo = Math.round(parseFloat(f.current_elo) || 0);
+      const streakHtml = f.win_streak > 1
+        ? `<span class="contender-streak">${f.win_streak}W</span>`
+        : `<span class="contender-streak"></span>`;
+      return `<div class="contender-row" data-id="${f.fighter_id}">
+        <div class="contender-avatar">
+          <img src="fighters/${f.fighter_id}.jpg" alt="${f.fighter}"
+               onerror="this.style.display='none'">
+        </div>
+        <span class="contender-rank">${String(i + 2).padStart(2, '0')}</span>
+        <span class="contender-name">${f.fighter}</span>
+        <span class="contender-wc">${f.weight_class || ''}</span>
+        ${streakHtml}
+        <span class="contender-elo">${elo.toLocaleString()}</span>
+      </div>`;
+    }).join('');
+
+    // Wire clicks
+    featCard.onclick = () => showFighter(champ.fighter_id);
+    contList.querySelectorAll('.contender-row').forEach(row => {
+      row.onclick = () => showFighter(row.dataset.id);
+    });
+  }
+
+  /* ── Leaderboard helpers ── */
+  function fmt(v) {
+    const n = parseFloat(v);
+    return isNaN(n) ? '—' : Math.round(n).toLocaleString();
+  }
+
+  function streak(n) {
+    const num = parseInt(n) || 0;
+    if (num === 0) return '<span style="color:var(--rule)">—</span>';
+    const filled = Math.min(num, 8);
+    const empty  = Math.max(0, 8 - filled);
+    return `<span class="streak-num">${num}</span><span class="streak-pip" style="color:var(--red)">${'●'.repeat(filled)}</span><span class="streak-pip" style="color:var(--rule)">${'●'.repeat(empty)}</span>`;
+  }
+
+  function rankClass(rank) {
+    if (rank === 1) return 'gold';
+    if (rank === 2) return 'silver';
+    if (rank === 3) return 'bronze';
+    return '';
+  }
+
+  function tableRows(data) {
+    return data.map(f => {
+      const rank  = f._rank;
+      const delta = Math.round((parseFloat(f.current_elo) || 0) - (parseFloat(f.peak_elo) || 0));
+      const dStr  = delta === 0 ? ''
+        : `<span style="font-size:9px;color:var(--muted);margin-left:4px">${delta > 0 ? '+' : ''}${delta}</span>`;
+      return `<tr data-id="${f.fighter_id}">
+        <td class="rank-cell ${rankClass(rank)}">${String(rank).padStart(2, '0')}</td>
+        <td><span class="name">${f.fighter}</span></td>
+        <td class="r peak">${fmt(f.peak_elo)}</td>
+        <td class="r dim">${fmt(f.current_elo)}${dStr}</td>
+        <td class="r dim fights-cell">${f.fights || '—'}</td>
+        <td class="r streak-cell">${streak(f.win_streak)}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  let filtered = [];
+  function render() {
+    document.getElementById('tbody').innerHTML = tableRows(filtered.slice(0, shown));
+    document.getElementById('result-label').textContent =
+      filtered.length < all.length
+        ? `${filtered.length.toLocaleString()} of ${all.length.toLocaleString()} fighters`
+        : '';
+    const moreWrap = document.getElementById('more-wrap');
+    const moreBtn  = document.getElementById('more-btn');
+    if (shown < filtered.length) {
+      moreWrap.style.display = 'block';
+      const rem = filtered.length - shown;
+      moreBtn.textContent = `Show ${Math.min(rem, PAGE)} More  ·  ${rem.toLocaleString()} remaining`;
+    } else {
+      moreWrap.style.display = 'none';
+    }
+  }
+
+  function filter(q) {
+    const s = q.toLowerCase().trim();
+    let base = [...all];
+    if (mode === 'current') base = base.filter(f => f.last_fight_date >= ACTIVE_CUTOFF_ISO);
+    if (activeWC) base = base.filter(f => f.weight_class === activeWC);
+    filtered = s
+      ? base.filter(f => f.fighter.toLowerCase().includes(s) || (f.fighter_id || '').includes(s.replace(/ /g, '_')))
+      : base;
+    shown = PAGE;
+    render();
+  }
+
+  function setWeightClass(wc) {
+    activeWC = wc;
+    document.querySelectorAll('.wc-tab').forEach(t => t.classList.toggle('active', t.dataset.wc === wc));
+    if (viewMode === 'rankings') renderRankings();
+    else filter(document.getElementById('search').value);
+  }
+
+  function setMode(m) {
+    mode = m;
+    const isCurrent = m === 'current';
+    document.getElementById('mode-current').classList.toggle('active', isCurrent);
+    document.getElementById('mode-alltime').classList.toggle('active', !isCurrent);
+    document.getElementById('mode-desc').textContent = isCurrent
+      ? 'Active fighters · Sorted by current Elo'
+      : 'All-time · Sorted by peak Elo';
+
+    const newSortCol = isCurrent ? 'current_elo' : 'peak_elo';
+    sortAsc = false;
+    sortCol = newSortCol;
+    document.querySelectorAll('th[data-sort]').forEach(th => {
+      th.classList.remove('sorted', 'asc');
+      if (th.dataset.sort === sortCol) th.classList.add('sorted');
+    });
+    all.sort((a, b) => (parseFloat(b[sortCol]) || 0) - (parseFloat(a[sortCol]) || 0));
+    all.forEach((f, i) => f._rank = i + 1);
+    filter(document.getElementById('search').value);
+  }
+
+  function sort(col) {
+    if (sortCol === col) sortAsc = !sortAsc;
+    else { sortCol = col; sortAsc = col === 'fighter'; }
+
+    document.querySelectorAll('th[data-sort]').forEach(th => {
+      th.classList.remove('sorted', 'asc');
+      if (th.dataset.sort === sortCol) {
+        th.classList.add('sorted');
+        if (sortAsc) th.classList.add('asc');
+      }
+    });
+
+    if (col === 'fighter') {
+      all.sort((a, b) => sortAsc ? a.fighter.localeCompare(b.fighter) : b.fighter.localeCompare(a.fighter));
+    } else {
+      all.sort((a, b) => {
+        const av = parseFloat(a[col]) || 0, bv = parseFloat(b[col]) || 0;
+        return sortAsc ? av - bv : bv - av;
+      });
+    }
+    all.forEach((f, i) => f._rank = i + 1);
+    filter(document.getElementById('search').value);
+  }
+
+  /* ── View switcher ── */
+  function setView(v) {
+    viewMode = v;
+    const isRankings = v === 'rankings';
+    document.getElementById('view-rankings-btn').classList.toggle('active', isRankings);
+    document.getElementById('view-leaderboard-btn').classList.toggle('active', !isRankings);
+    document.getElementById('rankings-view').style.display = isRankings ? 'block' : 'none';
+    document.getElementById('leaderboard-view').style.display = isRankings ? 'none' : 'block';
+    if (isRankings) renderRankings();
+  }
+
+  /* ── Fights log ── */
+  async function ensureFights() {
+    if (fightsLoaded || fightsLoading) return;
+    fightsLoading = true;
+    try {
+      const resp = await fetch('fights_log.csv');
+      if (!resp.ok) throw new Error(resp.status);
+      const text = await resp.text();
+      const fightRows = text.trim().split('\n').slice(1);
+      const headers = text.trim().split('\n')[0].split(',').map(h => h.trim());
+      fightsIndex = {};
+      for (const line of fightRows) {
+        const vals = [];
+        let cur = '', q = false;
+        for (const ch of line) {
+          if (ch === '"') { q = !q; continue; }
+          if (ch === ',' && !q) { vals.push(cur); cur = ''; continue; }
+          cur += ch;
+        }
+        vals.push(cur);
+        const fight = {};
+        headers.forEach((h, i) => fight[h] = (vals[i] ?? '').trim());
+        [fight.fighter_a_id, fight.fighter_b_id].forEach(fid => {
+          if (!fightsIndex[fid]) fightsIndex[fid] = [];
+          fightsIndex[fid].push(fight);
+        });
+      }
+      fightsLoaded = true;
+    } catch { fightsError = true; }
+    fightsLoading = false;
+  }
+
+  /* ── Modal ── */
+  function openModal() {
+    document.getElementById('modal-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function fightOutcome(fight, fighterId) {
+    const winner = fight.winner_id;
+    if (!winner) return fight.result === 'NC' ? { label: 'NC', cls: 'nc' } : { label: 'D', cls: 'draw' };
+    if (winner === fighterId) return { label: 'W', cls: 'win' };
+    return { label: 'L', cls: 'loss' };
+  }
+
+  function renderFightRow(fight, fighterId) {
+    const isA       = fight.fighter_a_id === fighterId;
+    const oppName   = isA ? fight.fighter_b  : fight.fighter_a;
+    const oppId     = isA ? fight.fighter_b_id : fight.fighter_a_id;
+    const eloBefore = parseFloat(isA ? fight.elo_a_before : fight.elo_b_before) || 0;
+    const delta     = parseFloat(isA ? fight.delta_a     : fight.delta_b)     || 0;
+    const expWin    = isA ? parseFloat(fight.exp_a) : (1 - parseFloat(fight.exp_a));
+    const { label, cls } = fightOutcome(fight, fighterId);
+    const dSign     = delta >= 0 ? '+' : '';
+    const dCls      = delta >= 0 ? 'pos' : 'neg';
+    return `<tr>
+      <td class="f-date">${fight.date}</td>
+      <td class="f-opp"><span class="name" data-opp-id="${oppId}">${oppName}</span></td>
+      <td class="f-res ${cls}">${label}</td>
+      <td class="f-method">${fight.result || '—'}</td>
+      <td class="f-elo r">${Math.round(eloBefore).toLocaleString()}</td>
+      <td class="f-delta r ${dCls}">${dSign}${delta.toFixed(1)}</td>
+      <td class="f-exp r">${isNaN(expWin) ? '—' : Math.round(expWin * 100) + '%'}</td>
+    </tr>`;
+  }
+
+  async function showFighter(fighterId) {
+    const fighter = all.find(f => f.fighter_id === fighterId);
+    if (!fighter) return;
+    const inner = document.getElementById('modal-inner');
+    inner.innerHTML = `
+      <button class="modal-close" id="modal-close-btn">
+        <svg viewBox="0 0 12 12"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+        Close
+      </button>
+      <div class="modal-fighter-name">${fighter.fighter}</div>
+      <div class="modal-loading">Loading fight history…</div>`;
+    openModal();
+    document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+    await ensureFights();
+    if (fightsError) {
+      inner.querySelector('.modal-loading').textContent = 'Fight history unavailable.';
+      return;
+    }
+    const fights = (fightsIndex[fighterId] || []).slice().sort((a, b) => b.date.localeCompare(a.date));
+    let wins = 0, losses = 0, draws = 0, nc = 0;
+    for (const f of fights) {
+      const { label } = fightOutcome(f, fighterId);
+      if (label === 'W') wins++;
+      else if (label === 'L') losses++;
+      else if (label === 'D') draws++;
+      else nc++;
+    }
+    const record  = `${wins}W · ${losses}L${draws ? ' · ' + draws + 'D' : ''}${nc ? ' · ' + nc + ' NC' : ''}`;
+    const peakElo = parseFloat(fighter.peak_elo) || 0;
+    inner.innerHTML = `
+      <button class="modal-close" id="modal-close-btn">
+        <svg viewBox="0 0 12 12"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+        Close
+      </button>
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <div class="modal-fighter-name">${fighter.fighter}</div>
+          <div class="modal-stats">
+            <div class="modal-stat-block">
+              <div class="modal-stat-n">${Math.round(peakElo).toLocaleString()}</div>
+              <div class="modal-stat-l">Peak Elo</div>
+            </div>
+            <div class="modal-stat-block">
+              <div class="modal-stat-n">${Math.round(parseFloat(fighter.current_elo) || 0).toLocaleString()}</div>
+              <div class="modal-stat-l">Current Elo</div>
+            </div>
+            <div class="modal-stat-block">
+              <div class="modal-stat-n" style="font-size:22px;padding-top:8px">${record}</div>
+              <div class="modal-stat-l">UFC Record</div>
+            </div>
+            ${parseInt(fighter.win_streak) > 0 ? `<div class="modal-stat-block">
+              <div class="modal-stat-n">${fighter.win_streak}</div>
+              <div class="modal-stat-l">Win Streak</div>
+            </div>` : ''}
+          </div>
+        </div>
+        <div class="modal-fighter-img">
+          <img src="fighters/${fighter.fighter_id}.jpg" alt="${fighter.fighter}"
+               onerror="this.parentElement.style.display='none'">
+        </div>
+      </div>
+      <div class="modal-rule"></div>
+      ${fights.length === 0
+        ? '<p style="font-size:11px;color:var(--muted);letter-spacing:0.08em">No fight data available.</p>'
+        : `<table class="fight-table">
+            <thead>
+              <tr>
+                <th>Date</th><th>Opponent</th><th>W/L</th><th>Method</th>
+                <th class="r">Elo</th><th class="r">Δ</th><th class="r">Expected</th>
+              </tr>
+            </thead>
+            <tbody>${fights.map(f => renderFightRow(f, fighterId)).join('')}</tbody>
+          </table>`}`;
+    document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+    inner.querySelectorAll('[data-opp-id]').forEach(el => {
+      el.addEventListener('click', e => { e.stopPropagation(); showFighter(el.dataset.oppId); });
+    });
+  }
+
+  /* ── Event wiring ── */
+  document.getElementById('view-rankings-btn').addEventListener('click', () => setView('rankings'));
+  document.getElementById('view-leaderboard-btn').addEventListener('click', () => setView('leaderboard'));
+  document.querySelectorAll('.wc-tab').forEach(tab =>
+    tab.addEventListener('click', () => setWeightClass(tab.dataset.wc))
+  );
+  document.getElementById('mode-current').addEventListener('click', () => setMode('current'));
+  document.getElementById('mode-alltime').addEventListener('click', () => setMode('alltime'));
+  document.getElementById('search').addEventListener('input', e => filter(e.target.value));
+  document.getElementById('more-btn').addEventListener('click', () => {
+    shown = Math.min(shown + PAGE, filtered.length);
+    render();
+  });
+  document.querySelectorAll('th[data-sort]').forEach(th =>
+    th.addEventListener('click', () => sort(th.dataset.sort))
+  );
+  document.getElementById('tbody').addEventListener('click', e => {
+    const row = e.target.closest('tr[data-id]');
+    if (row) showFighter(row.dataset.id);
+  });
+  document.getElementById('modal-overlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('modal-overlay')) closeModal();
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  /* ── Init ── */
+  async function init() {
+    try {
+      const resp = await fetch('leaderboard.csv');
+      if (!resp.ok) throw new Error(resp.status);
+      const text = await resp.text();
+      all = parseCSV(text);
+
+      const activeCount = all.filter(f => f.last_fight_date >= ACTIVE_CUTOFF_ISO).length;
+      document.getElementById('stat-fighters').textContent = all.length.toLocaleString();
+      document.getElementById('stat-active').textContent   = activeCount.toLocaleString();
+
+      // Initial sort by current_elo descending for both views
+      all.sort((a, b) => (parseFloat(b.current_elo) || 0) - (parseFloat(a.current_elo) || 0));
+      all.forEach((f, i) => f._rank = i + 1);
+      sortCol = 'current_elo'; sortAsc = false;
+
+      // Sync sorted header state
+      document.querySelectorAll('th[data-sort]').forEach(th => {
+        th.classList.remove('sorted', 'asc');
+        if (th.dataset.sort === 'current_elo') th.classList.add('sorted');
+      });
+
+      setView('rankings');
+      setTimeout(ensureFights, 2000);
+    } catch {
+      document.getElementById('table-wrap').innerHTML = `
+        <div class="error-state">
+          Could not load <code>leaderboard.csv</code><br><br>
+          Serve this directory with a local web server:<br>
+          <code>python -m http.server 8000</code><br><br>
+          Then open <code>http://localhost:8000</code>
+        </div>`;
+    }
+  }
+
+  init().then(() => {
+    const q = new URLSearchParams(location.search).get('search');
+    if (q) {
+      setView('leaderboard');
+      const inp = document.getElementById('search');
+      inp.value = q;
+      filter(q);
+    }
+  });
+</script>
+</body>
+</html>
