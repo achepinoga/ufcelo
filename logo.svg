@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" width="320" height="80">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;display=swap');
+    </style>
+  </defs>
+  <!-- Paper background (transparent for use on any bg) -->
+
+  <!-- Red rule — left accent bar -->
+  <rect x="0" y="18" width="4" height="44" fill="#B91C1C"/>
+
+  <!-- UFC -->
+  <text x="16" y="58"
+    font-family="'Bebas Neue', 'Arial Black', sans-serif"
+    font-size="52"
+    letter-spacing="6"
+    fill="#1A1A1A">UFC</text>
+
+  <!-- Thin separator rule -->
+  <rect x="121" y="22" width="1.5" height="36" fill="#C8BCA8"/>
+
+  <!-- ELO -->
+  <text x="132" y="58"
+    font-family="'Bebas Neue', 'Arial Black', sans-serif"
+    font-size="52"
+    letter-spacing="6"
+    fill="#B91C1C">ELO</text>
+
+  <!-- Bottom rule -->
+  <rect x="16" y="66" width="285" height="2" fill="#1A1A1A"/>
+</svg>
