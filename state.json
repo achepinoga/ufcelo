@@ -1,5 +1,5 @@
 {
-  "last_processed_date": "2026-05-09",
+  "last_processed_date": "2026-05-16",
   "fighters": {
     "royce_gracie": {
       "name": "Royce Gracie",
@@ -48579,9 +48579,9 @@
     },
     "dooho_choi": {
       "name": "Dooho Choi",
-      "elo": 836.6418,
-      "fight_count": 9,
-      "win_streak": 2,
+      "elo": 853.8453,
+      "fight_count": 10,
+      "win_streak": 3,
       "elo_history": [
         [
           "2014-11-22",
@@ -48618,6 +48618,10 @@
         [
           "2024-12-07",
           836.64
+        ],
+        [
+          "2026-05-16",
+          853.85
         ]
       ]
     },
@@ -51435,9 +51439,9 @@
     },
     "arnold_allen": {
       "name": "Arnold Allen",
-      "elo": 918.3935,
-      "fight_count": 14,
-      "win_streak": 0,
+      "elo": 929.3706,
+      "fight_count": 15,
+      "win_streak": 1,
       "elo_history": [
         [
           "2015-06-20",
@@ -51494,6 +51498,10 @@
         [
           "2026-01-24",
           918.39
+        ],
+        [
+          "2026-05-16",
+          929.37
         ]
       ]
     },
@@ -56843,9 +56851,9 @@
     },
     "ketlen_vieira": {
       "name": "Ketlen Vieira",
-      "elo": 849.5293,
-      "fight_count": 14,
-      "win_streak": 0,
+      "elo": 863.3008,
+      "fight_count": 15,
+      "win_streak": 1,
       "elo_history": [
         [
           "2016-10-01",
@@ -56902,6 +56910,10 @@
         [
           "2025-11-01",
           849.53
+        ],
+        [
+          "2026-05-16",
+          863.3
         ]
       ]
     },
@@ -63079,8 +63091,8 @@
     },
     "polyana_viana": {
       "name": "Polyana Viana",
-      "elo": 764.1456,
-      "fight_count": 11,
+      "elo": 749.807,
+      "fight_count": 12,
       "win_streak": 0,
       "elo_history": [
         [
@@ -63126,6 +63138,10 @@
         [
           "2025-04-26",
           764.15
+        ],
+        [
+          "2026-05-16",
+          749.81
         ]
       ]
     },
@@ -72679,9 +72695,9 @@
     },
     "khaos_williams": {
       "name": "Khaos Williams",
-      "elo": 846.1813,
-      "fight_count": 10,
-      "win_streak": 0,
+      "elo": 859.8867,
+      "fight_count": 11,
+      "win_streak": 1,
       "elo_history": [
         [
           "2020-02-08",
@@ -72722,6 +72738,10 @@
         [
           "2025-06-07",
           846.18
+        ],
+        [
+          "2026-05-16",
+          859.89
         ]
       ]
     },
@@ -73991,9 +74011,9 @@
     },
     "modestas_bukauskas": {
       "name": "Modestas Bukauskas",
-      "elo": 827.3849,
-      "fight_count": 12,
-      "win_streak": 0,
+      "elo": 838.3996,
+      "fight_count": 13,
+      "win_streak": 1,
       "elo_history": [
         [
           "2020-07-15",
@@ -74042,6 +74062,10 @@
         [
           "2026-01-24",
           827.38
+        ],
+        [
+          "2026-05-16",
+          838.4
         ]
       ]
     },
@@ -78583,8 +78607,8 @@
     },
     "andre_petroski": {
       "name": "Andre Petroski",
-      "elo": 850.9697,
-      "fight_count": 12,
+      "elo": 834.8479,
+      "fight_count": 13,
       "win_streak": 0,
       "elo_history": [
         [
@@ -78634,6 +78658,10 @@
         [
           "2025-09-27",
           850.97
+        ],
+        [
+          "2026-05-16",
+          834.85
         ]
       ]
     },
@@ -78887,9 +78915,9 @@
     },
     "cody_brundage": {
       "name": "Cody Brundage",
-      "elo": 760.1644,
-      "fight_count": 13,
-      "win_streak": 0,
+      "elo": 776.2862,
+      "fight_count": 14,
+      "win_streak": 1,
       "elo_history": [
         [
           "2021-09-25",
@@ -78942,6 +78970,10 @@
         [
           "2026-03-07",
           760.16
+        ],
+        [
+          "2026-05-16",
+          776.29
         ]
       ]
     },
@@ -80607,9 +80639,9 @@
     },
     "daniel_santos": {
       "name": "Daniel Santos",
-      "elo": 861.1229,
-      "fight_count": 5,
-      "win_streak": 4,
+      "elo": 843.9194,
+      "fight_count": 6,
+      "win_streak": 0,
       "elo_history": [
         [
           "2022-04-09",
@@ -80630,6 +80662,10 @@
         [
           "2025-10-04",
           861.12
+        ],
+        [
+          "2026-05-16",
+          843.92
         ]
       ]
     },
@@ -82651,9 +82687,9 @@
     },
     "melquizael_costa": {
       "name": "Melquizael Costa",
-      "elo": 871.0651,
-      "fight_count": 9,
-      "win_streak": 6,
+      "elo": 860.088,
+      "fight_count": 10,
+      "win_streak": 0,
       "elo_history": [
         [
           "2023-01-21",
@@ -82690,6 +82726,10 @@
         [
           "2026-02-21",
           871.07
+        ],
+        [
+          "2026-05-16",
+          860.09
         ]
       ]
     },
@@ -84815,8 +84855,8 @@
     },
     "shauna_bannon": {
       "name": "Shauna Bannon",
-      "elo": 799.788,
-      "fight_count": 4,
+      "elo": 780.7587,
+      "fight_count": 5,
       "win_streak": 0,
       "elo_history": [
         [
@@ -84834,13 +84874,17 @@
         [
           "2025-09-06",
           799.79
+        ],
+        [
+          "2026-05-16",
+          780.76
         ]
       ]
     },
     "daniel_barez": {
       "name": "Daniel Barez",
-      "elo": 775.649,
-      "fight_count": 3,
+      "elo": 759.4619,
+      "fight_count": 4,
       "win_streak": 0,
       "elo_history": [
         [
@@ -84854,6 +84898,10 @@
         [
           "2025-03-15",
           775.65
+        ],
+        [
+          "2026-05-16",
+          759.46
         ]
       ]
     },
@@ -85199,9 +85247,9 @@
     },
     "jacqueline_cavalcanti": {
       "name": "Jacqueline Cavalcanti",
-      "elo": 869.7789,
-      "fight_count": 5,
-      "win_streak": 5,
+      "elo": 856.0074,
+      "fight_count": 6,
+      "win_streak": 0,
       "elo_history": [
         [
           "2023-09-02",
@@ -85222,6 +85270,10 @@
         [
           "2025-11-08",
           869.78
+        ],
+        [
+          "2026-05-16",
+          856.01
         ]
       ]
     },
@@ -86155,9 +86207,9 @@
     },
     "timmy_cuamba": {
       "name": "Timmy Cuamba",
-      "elo": 809.1143,
-      "fight_count": 4,
-      "win_streak": 2,
+      "elo": 789.7134,
+      "fight_count": 5,
+      "win_streak": 0,
       "elo_history": [
         [
           "2024-02-10",
@@ -86174,6 +86226,10 @@
         [
           "2025-11-01",
           809.11
+        ],
+        [
+          "2026-05-16",
+          789.71
         ]
       ]
     },
@@ -86403,9 +86459,9 @@
     },
     "benardo_sopaj": {
       "name": "Benardo Sopaj",
-      "elo": 791.7427,
-      "fight_count": 2,
-      "win_streak": 1,
+      "elo": 811.1436,
+      "fight_count": 3,
+      "win_streak": 2,
       "elo_history": [
         [
           "2024-03-02",
@@ -86414,6 +86470,10 @@
         [
           "2025-01-18",
           791.74
+        ],
+        [
+          "2026-05-16",
+          811.14
         ]
       ]
     },
@@ -87043,9 +87103,9 @@
     },
     "tuco_tokkos": {
       "name": "Tuco Tokkos",
-      "elo": 777.6262,
-      "fight_count": 3,
-      "win_streak": 1,
+      "elo": 761.0289,
+      "fight_count": 4,
+      "win_streak": 0,
       "elo_history": [
         [
           "2024-05-18",
@@ -87058,6 +87118,10 @@
         [
           "2025-07-12",
           777.63
+        ],
+        [
+          "2026-05-16",
+          761.03
         ]
       ]
     },
@@ -87295,9 +87359,9 @@
     },
     "alice_ardelean": {
       "name": "Alice Ardelean",
-      "elo": 798.149,
-      "fight_count": 4,
-      "win_streak": 2,
+      "elo": 812.4876,
+      "fight_count": 5,
+      "win_streak": 3,
       "elo_history": [
         [
           "2024-07-27",
@@ -87314,6 +87378,10 @@
         [
           "2025-11-01",
           798.15
+        ],
+        [
+          "2026-05-16",
+          812.49
         ]
       ]
     },
@@ -87335,9 +87403,9 @@
     },
     "nikolay_veretennikov": {
       "name": "Nikolay Veretennikov",
-      "elo": 778.5706,
-      "fight_count": 5,
-      "win_streak": 1,
+      "elo": 764.8652,
+      "fight_count": 6,
+      "win_streak": 0,
       "elo_history": [
         [
           "2024-08-10",
@@ -87358,6 +87426,10 @@
         [
           "2026-02-07",
           778.57
+        ],
+        [
+          "2026-05-16",
+          764.87
         ]
       ]
     },
@@ -87603,9 +87675,9 @@
     },
     "ivan_erslan": {
       "name": "Ivan Erslan",
-      "elo": 755.3655,
-      "fight_count": 3,
-      "win_streak": 0,
+      "elo": 771.9628,
+      "fight_count": 4,
+      "win_streak": 1,
       "elo_history": [
         [
           "2024-09-28",
@@ -87618,6 +87690,10 @@
         [
           "2025-09-27",
           755.37
+        ],
+        [
+          "2026-05-16",
+          771.96
         ]
       ]
     },
@@ -88147,9 +88223,9 @@
     },
     "nicolle_caliari": {
       "name": "Nicolle Caliari",
-      "elo": 763.6641,
-      "fight_count": 2,
-      "win_streak": 0,
+      "elo": 782.6934,
+      "fight_count": 3,
+      "win_streak": 1,
       "elo_history": [
         [
           "2025-01-11",
@@ -88158,6 +88234,10 @@
         [
           "2025-07-19",
           763.66
+        ],
+        [
+          "2026-05-16",
+          782.69
         ]
       ]
     },
@@ -88691,9 +88771,9 @@
     },
     "luis_gurule": {
       "name": "Luis Gurule",
-      "elo": 748.4393,
-      "fight_count": 3,
-      "win_streak": 0,
+      "elo": 764.6264,
+      "fight_count": 4,
+      "win_streak": 1,
       "elo_history": [
         [
           "2025-04-05",
@@ -88706,6 +88786,10 @@
         [
           "2026-02-21",
           748.44
+        ],
+        [
+          "2026-05-16",
+          764.63
         ]
       ]
     },
@@ -88799,8 +88883,8 @@
     },
     "malcolm_wellmaker": {
       "name": "Malcolm Wellmaker",
-      "elo": 820.7795,
-      "fight_count": 3,
+      "elo": 799.6225,
+      "fight_count": 4,
       "win_streak": 0,
       "elo_history": [
         [
@@ -88814,6 +88898,10 @@
         [
           "2025-11-15",
           820.78
+        ],
+        [
+          "2026-05-16",
+          799.62
         ]
       ]
     },
@@ -90266,6 +90354,54 @@
         [
           "2026-05-02",
           776.99
+        ]
+      ]
+    },
+    "juan_diaz": {
+      "name": "Juan Diaz",
+      "elo": 821.157,
+      "fight_count": 1,
+      "win_streak": 1,
+      "elo_history": [
+        [
+          "2026-05-16",
+          821.16
+        ]
+      ]
+    },
+    "christian_edwards": {
+      "name": "Christian Edwards",
+      "elo": 788.9853,
+      "fight_count": 1,
+      "win_streak": 0,
+      "elo_history": [
+        [
+          "2026-05-16",
+          788.99
+        ]
+      ]
+    },
+    "tommy_gantt": {
+      "name": "Tommy Gantt",
+      "elo": 825.0,
+      "fight_count": 1,
+      "win_streak": 1,
+      "elo_history": [
+        [
+          "2026-05-16",
+          825.0
+        ]
+      ]
+    },
+    "artur_minev": {
+      "name": "Artur Minev",
+      "elo": 775.0,
+      "fight_count": 1,
+      "win_streak": 0,
+      "elo_history": [
+        [
+          "2026-05-16",
+          775.0
         ]
       ]
     }
